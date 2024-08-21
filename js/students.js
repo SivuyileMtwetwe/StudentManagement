@@ -53,6 +53,8 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             <option value="class" ${sortField === 'class' ? 'selected' : ''}>Sort by Class</option>
         </select>
         <button id="exportBtn">Export to CSV</button>
+        <button id="importBtn">Import Students from CSV</button>
+        <button id='deleteAll'>Delete All</button>
         <table>
             <thead>
                 <tr>
@@ -82,9 +84,19 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             ).join('')}
         </div>
     `;
+    document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV)
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
         displayStudents(e.target.value, sortField, sortAscending);
+
+    });
+    document.getElementById('deleteAll').addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete all students?')) {
+            students = [];
+            saveStudents();
+            displayStudents();
+            addNotification('All students deleted successfully');
+        }
     });
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
@@ -197,6 +209,37 @@ function exportToCSV() {
     addNotification('CSV file exported successfully');
 }
 
+function importStudentsFromCSV() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.csv';
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            Papa.parse(file, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    const newStudents = results.data.map((row) => ({
+                        id: Date.now() + Math.random(),
+                        name: row.Name,
+                        age: parseInt(row.Age),
+                        class: row.Class,
+                        performance: [],
+                    }));
+                    students.push(...newStudents);
+                    saveStudents();
+                    displayStudents();
+                    addNotification('Students imported successfully!');
+                },
+            });
+        }
+    });
+    fileInput.click();
+}
+
+
 function calculateStats() {
     const totalStudents = students.length;
     const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
@@ -211,7 +254,6 @@ function calculateStats() {
         classDistribution
     };
 }
-
 function displayStats() {
     const stats = calculateStats();
     const contentDiv = document.getElementById('content');
@@ -219,29 +261,30 @@ function displayStats() {
         <h2>Student Statistics</h2>
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
             <div style="width: 300px; height: 300px;">
-                <canvas id="ageDistributionChart"></canvas>
+                <canvas id="performanceDistributionChart"></canvas>
             </div>
             <div style="width: 300px; height: 300px;">
-                <canvas id="classDistributionChart"></canvas>
+                <canvas id="classPerformanceChart"></canvas>
             </div>
         </div>
         <p>Total Students: ${stats.totalStudents}</p>
         <p>Average Age: ${stats.averageAge}</p>
     `;
 
-    // Age distribution chart
-    const ageCtx = document.getElementById('ageDistributionChart').getContext('2d');
-    new Chart(ageCtx, {
+    // Performance distribution chart
+    const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
+    new Chart(performanceCtx, {
         type: 'bar',
         data: {
-            labels: ['<18', '18-21', '22-25', '26+'],
+            labels: ['0-50', '51-70', '71-80', '81-90', '91-100'],
             datasets: [{
-                label: 'Age Distribution',
+                label: 'Performance Distribution',
                 data: [
-                    students.filter(s => s.age < 18).length,
-                    students.filter(s => s.age >= 18 && s.age <= 21).length,
-                    students.filter(s => s.age >= 22 && s.age <= 25).length,
-                    students.filter(s => s.age > 25).length
+                    students.filter(s => s.performance.some(p => p.score >= 0 && p.score <= 50)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 51 && p.score <= 70)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 71 && p.score <= 80)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 81 && p.score <= 90)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 91 && p.score <= 100)).length
                 ],
                 backgroundColor: 'rgba(75, 192, 192, 0.6)'
             }]
@@ -260,104 +303,70 @@ function displayStats() {
         }
     });
 
-    // Class distribution chart
-    const classCtx = document.getElementById('classDistributionChart').getContext('2d');
-    new Chart(classCtx, {
-        type: 'pie',
+    // Class performance chart
+    const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
+    new Chart(classPerformanceCtx, {
+        type: 'bar',
         data: {
-            labels: Object.keys(stats.classDistribution),
-            datasets: [{
-                data: Object.values(stats.classDistribution),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)'
-                ]
-            }]
+            labels: Object.keys(stats.classPerformanceDistribution),
+            datasets: [
+                {
+                    label: 'Average Performance',
+                    data: Object.values(stats.classPerformanceDistribution).map(c => c.averageScore.toFixed(2)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                },
+                {
+                    label: 'Number of Students',
+                    data: Object.values(stats.classPerformanceDistribution).map(c => c.count),
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                }
+            ]
         },
         options: {
             responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Performance Score / Number of Students'
+                    }
+                }
+            },
             plugins: {
                 legend: {
-                    position: 'right',
+                    position: 'right'
                 }
             }
         }
     });
 }
 
-function displayGroupStats() {
-    const stats = calculateStats();
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Group Statistics</h2>
-        <p>Total Students: ${stats.totalStudents}</p>
-        <p>Number of Classes: ${Object.keys(stats.classDistribution).length}</p>
-        <h3>Students per Class:</h3>
-        <ul>
-            ${Object.entries(stats.classDistribution).map(([className, count]) => 
-                `<li>${className}: ${count} student(s)</li>`
-            ).join('')}
-        </ul>
-    `;
-}
+function calculateStats() {
+    const totalStudents = students.length;
+    const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
 
-function advancedFilter() {
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Advanced Filter</h2>
-        <form id="advancedFilterForm">
-            <label>
-                Age Range:
-                <input type="number" id="minAge" placeholder="Min Age">
-                <input type="number" id="maxAge" placeholder="Max Age">
-            </label>
-            <label>
-                Class:
-                <select id="classFilter">
-                    <option value="">All Classes</option>
-                    ${[...new Set(students.map(s => s.class))].map(c => `<option value="${c}">${c}</option>`).join('')}
-                </select>
-            </label>
-            <button type="submit">Apply Filter</button>
-        </form>
-        <div id="filterResults"></div>
-    `;
+    const classPerformanceDistribution = students.reduce((dist, student) => {
+        const { class: studentClass } = student;
+        const studentPerformance = student.performance.map(p => p.score);
+        const averageScore = studentPerformance.length > 0 ? studentPerformance.reduce((sum, score) => sum + score, 0) / studentPerformance.length : 0;
 
-    document.getElementById('advancedFilterForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const minAge = document.getElementById('minAge').value;
-        const maxAge = document.getElementById('maxAge').value;
-        const classFilter = document.getElementById('classFilter').value;
+        if (dist[studentClass]) {
+            dist[studentClass].count += 1;
+            dist[studentClass].averageScore = ((dist[studentClass].averageScore * (dist[studentClass].count - 1)) + averageScore) / dist[studentClass].count;
+        } else {
+            dist[studentClass] = {
+                count: 1,
+                averageScore
+            };
+        }
 
-        const filteredStudents = students.filter(student => 
-            (!minAge || student.age >= minAge) &&
-            (!maxAge || student.age <= maxAge) &&
-            (!classFilter || student.class === classFilter)
-        );
+        return dist;
+    }, {});
 
-        document.getElementById('filterResults').innerHTML = `
-            <h3>Filtered Results (${filteredStudents.length} students)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Class</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredStudents.map(student => `
-                        <tr>
-                            <td>${student.name}</td>
-                            <td>${student.age}</td>
-                            <td>${student.class}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    });
+    return {
+        totalStudents,
+        averageAge: averageAge.toFixed(2),
+        classPerformanceDistribution
+    };
 }
