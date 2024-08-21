@@ -203,9 +203,8 @@ function addPerformanceRecord(studentId, subject, score) {
 }
 
 function exportToCSV() {
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + "Name,Age,Class\n"
-        + students.map(s => `${s.name},${s.age},${s.class}`).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
+        + students.map(s => `${s.name},${s.age},${s.class},${s.performance.map(p => p.subject).join('|')},${s.performance.map(p => p.score).join('|')}`).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -229,13 +228,22 @@ function importStudentsFromCSV() {
                 header: true,
                 skipEmptyLines: true,
                 complete: (results) => {
-                    const newStudents = results.data.map((row) => ({
-                        id: Date.now() + Math.random(),
-                        name: row.Name,
-                        age: parseInt(row.Age),
-                        class: row.Class,
-                        performance: [],
-                    }));
+                    const newStudents = results.data.map((row) => {
+                        const subjects = row.Subjects.split('|');
+                        const scores = row.Scores.split('|');
+                        const performance = subjects.map((subject, index) => ({
+                            subject,
+                            score: parseInt(scores[index]),
+                            date: new Date().toISOString()
+                        }));
+                        return {
+                            id: Date.now() + Math.random(),
+                            name: row.Name,
+                            age: parseInt(row.Age),
+                            class: row.Class,
+                            performance
+                        };
+                    });
                     students.push(...newStudents);
                     saveStudents();
                     displayStudents();
