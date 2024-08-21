@@ -61,6 +61,8 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
                     <th>Name</th>
                     <th>Age</th>
                     <th>Class</th>
+                    <th>Subjects</th>
+                    <th>Scores</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -70,6 +72,12 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
                         <td>${student.name}</td>
                         <td>${student.age}</td>
                         <td>${student.class}</td>
+                        <td>
+                            ${student.performance.map(p => p.subject).join(', ')}
+                        </td>
+                        <td>
+                            ${student.performance.map(p => p.score).join(', ')}
+                        </td>
                         <td>
                             <button onclick="editStudent(${student.id})">Edit</button>
                             <button onclick="deleteStudentHandler(${student.id})">Delete</button>

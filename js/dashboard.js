@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     viewStudentsBtn.addEventListener('click', () => displayStudents());
     viewStatsBtn.addEventListener('click', displayStats);
     groupStatsBtn.addEventListener('click', displayGroupStats);
-    advancedFilterBtn.addEventListener('click', advancedFilter);
+    advancedFilterBtn.addEventListener('click', advancedFilterBtn);
 
     // Initially display the student list
     displayStudents();
