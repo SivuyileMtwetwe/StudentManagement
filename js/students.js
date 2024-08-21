@@ -205,7 +205,7 @@ function addPerformanceRecord(studentId, subject, score) {
 function exportToCSV() {
     const csvContent = "data:text/csv;charset=utf-8," 
         + "Name,Age,Class\n"
-        + students.map(s => `${s.name},${s.age},${s.class}`,${s.subjects.join(', ')},${s.scores.join(', ')}).join("\n");
+        + students.map(s => `${s.name},${s.age},${s.class},${s.subjects.join(', ')},${s.scores.join(', ')}`).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
