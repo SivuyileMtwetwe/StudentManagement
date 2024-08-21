@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userInfo = document.getElementById('userInfo');
     userInfo.innerHTML = `
         <h2>Welcome, ${loggedInUser} (${userRole})!</h2>
-        <button id="logoutBtn">Logout</button>
+        <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>  Logout</button>
     `;
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <input type="text" id="studentName" placeholder="Student Name" required>
                 <input type="number" id="studentAge" placeholder="Age" required>
                 <input type="text" id="studentClass" placeholder="Class" required>
-                <button type="submit">Add Student</button>
+                <button type="submit"><i class="fa-solid fa-user-plus"></i>  Add Student</button>
             </form>
         `;
         

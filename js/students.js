@@ -52,9 +52,9 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             <option value="age" ${sortField === 'age' ? 'selected' : ''}>Sort by Age</option>
             <option value="class" ${sortField === 'class' ? 'selected' : ''}>Sort by Class</option>
         </select>
-        <button id="exportBtn">Export to CSV</button>
-        <button id="importBtn">Import Students from CSV</button>
-        <button id='deleteAll'>Delete All</button>
+        <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
+        <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
+        <button id='deleteAll'><i class="fa-solid fa-trash"> Delete All</i></button>
         <table>
             <thead>
                 <tr>
@@ -79,8 +79,8 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
                             ${student.performance.map(p => p.score).join(', ')}
                         </td>
                         <td>
-                            <button onclick="editStudent(${student.id})">Edit</button>
-                            <button onclick="deleteStudentHandler(${student.id})">Delete</button>
+                            <button onclick="editStudent(${student.id})"><i class="fa-solid fa-pen-to-square"></i>  Edit</button>
+                            <button onclick="deleteStudentHandler(${student.id})"><i class="fa-solid fa-trash"></i>  Delete</button>
                         </td>
                     </tr>
                 `).join('')}
@@ -155,8 +155,8 @@ function editStudent(id) {
                 <h3>Add Performance Record</h3>
                 <input type="text" id="newSubject" placeholder="Subject">
                 <input type="number" id="newScore" placeholder="Score">
-                <button type="button" id="addPerformanceBtn">Add Performance</button>
-                <button type="submit">Update Student</button>
+                <button type="button" id="addPerformanceBtn"><i class="fa-solid fa-circle-plus"></i>  Add Performance</button>
+                <button type="submit"><i class="fa-solid fa-file-pen"></i>  Update Student</button>
             </form>
         `;
         
