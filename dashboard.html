@@ -6,32 +6,7 @@
     <title>Student Management System - Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  .popover {
-    display: none;
-    position: absolute;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 10px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  }
 
-  #calculator {
-    margin-top: 10px;
-  }
-
-  #display {
-    width: 100%;
-    margin-bottom: 5px;
-    font-size: 18px;
-  }
-
-  #buttons button {
-    width: 25%;
-    padding: 10px;
-    font-size: 18px;
-  }
-</style>
 </head>
 <body>
 
@@ -49,32 +24,6 @@
     </nav>
     <div id="content">
         <!-- Content will be dynamically loaded here -->
-
-<div id="popover" style="display: none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-            <div id="calculator">
-                <input type="text" id="display" readonly>
-                <div class="buttons">
-                    <button onclick="appendNumber('1')">1</button>
-                    <button onclick="appendNumber('2')">2</button>
-                    <button onclick="appendNumber('3')">3</button>
-                    <button onclick="appendNumber('4')">4</button>
-                    <button onclick="appendNumber('5')">5</button>
-                    <button onclick="appendNumber('6')">6</button>
-                    <button onclick="appendNumber('7')">7</button>
-                    <button onclick="appendNumber('8')">8</button>
-                    <button onclick="appendNumber('9')">9</button>
-                    <button onclick="appendNumber('0')">0</button>
-                    <button onclick="appendNumber('.')">.</button>
-                    <button onclick="appendNumber('+')">+</button>
-                    <button onclick="appendNumber('-')">-</button>
-                    <button onclick="appendNumber('*')">*</button>
-                    <button onclick="appendNumber('/')">/</button>
-                    <button onclick="calculate()">=</button>
-                    <button onclick="clearDisplay()">C</button>
-                </div>
-            </div>
-        </div>
-    </div>
     </div>
     
     <script src="js/dashboard.js"></script>
