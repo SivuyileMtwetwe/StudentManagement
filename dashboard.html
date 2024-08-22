@@ -49,6 +49,32 @@
     </nav>
     <div id="content">
         <!-- Content will be dynamically loaded here -->
+
+<div id="popover" style="display: none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+            <div id="calculator">
+                <input type="text" id="display" readonly>
+                <div class="buttons">
+                    <button onclick="appendNumber('1')">1</button>
+                    <button onclick="appendNumber('2')">2</button>
+                    <button onclick="appendNumber('3')">3</button>
+                    <button onclick="appendNumber('4')">4</button>
+                    <button onclick="appendNumber('5')">5</button>
+                    <button onclick="appendNumber('6')">6</button>
+                    <button onclick="appendNumber('7')">7</button>
+                    <button onclick="appendNumber('8')">8</button>
+                    <button onclick="appendNumber('9')">9</button>
+                    <button onclick="appendNumber('0')">0</button>
+                    <button onclick="appendNumber('.')">.</button>
+                    <button onclick="appendNumber('+')">+</button>
+                    <button onclick="appendNumber('-')">-</button>
+                    <button onclick="appendNumber('*')">*</button>
+                    <button onclick="appendNumber('/')">/</button>
+                    <button onclick="calculate()">=</button>
+                    <button onclick="clearDisplay()">C</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
     
     <script src="js/dashboard.js"></script>
@@ -58,32 +84,5 @@
     <script src="js/darkMode.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  function appendNumber(number) {
-    const display = document.getElementById('display');
-    display.value += number;
-  }
-
-  function calculate() {
-    const display = document.getElementById('display');
-    try {
-      display.value = eval(display.value);
-    } catch {
-      display.value = 'Error';
-    }
-  }
-
-  function clearDisplay() {
-    document.getElementById('display').value = '';
-  }
-
-  document.getElementById('popoverTarget').addEventListener('click', function() {
-    const popover = document.getElementById('popover');
-    const targetRect = this.getBoundingClientRect();
-    popover.style.display = popover.style.display === 'none' ? 'block' : 'none';
-    popover.style.top = `${targetRect.bottom + window.scrollY}px`;
-    popover.style.left = `${targetRect.left + window.scrollX}px`;
-  });
-</script>
 </body>
 </html>
