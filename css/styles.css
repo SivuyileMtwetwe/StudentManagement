@@ -180,19 +180,25 @@ body.dark-mode th {
     }
 }
 
-.loader {
+/* Loader CSS */
+#loader {
   box-sizing: border-box;
   display: inline-block;
   width: 50px;
   height: 80px;
   border-top: 5px solid #fff;
   border-bottom: 5px solid #fff;
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: linear-gradient(#FF3D00 30px, transparent 0) no-repeat;
   background-size: 2px 40px;
   background-position: 50% 0px;
   animation: spinx 5s linear infinite;
+  z-index: 9999;
 }
+
 .loader:before, .loader:after {
   content: "";
   width: 40px;
@@ -252,4 +258,5 @@ body.dark-mode th {
     background-position: 50% 36px;
   }
 }
+
     
