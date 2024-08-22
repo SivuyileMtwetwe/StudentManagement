@@ -1,22 +1,12 @@
-let notifications = [];
-
 function addNotification(message) {
-    const id = Date.now();
-    notifications.push({ id, message });
-    displayNotifications();
-    setTimeout(() => removeNotification(id), 5000); // Auto-remove after 5 seconds
+    Toast.fire({
+        icon: "info", // You can change the icon based on the type of notification
+        title: message
+    });
 }
 
-function removeNotification(id) {
-    notifications = notifications.filter(n => n.id !== id);
-    displayNotifications();
-}
+// Remove the following functions as they are no longer needed:
+// - removeNotification
+// - displayNotifications
 
-function displayNotifications() {
-    const notificationArea = document.getElementById('notificationArea');
-    notificationArea.innerHTML = notifications.map(n => `
-        <div class="notification" onclick="removeNotification(${n.id})">
-            ${n.message}
-        </div>
-    `).join('');
-}
+// Your notifications will now be displayed as toasts using SweetAlert2
