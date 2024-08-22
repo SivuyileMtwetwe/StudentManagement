@@ -55,9 +55,7 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
         <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
         <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
         <button id='deleteAll'><i class="fa-solid fa-trash"> Delete All</i></button>
-         <button class="bg-yellow-500 text-white px-4 py-2 rounded flex items-center" onclick="openCalculatorModal()">
-                    <i class="fas fa-calculator mr-2"></i> Calculator
-                </button>
+       <button id="popoverTarget">Calculator</button>
         <table>
             <thead>
                 <tr>
