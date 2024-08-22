@@ -99,13 +99,44 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
 
     });
     document.getElementById('deleteAll').addEventListener('click', () => {
-        if (confirm('Are you sure you want to delete all students?')) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
             students = [];
             saveStudents();
             displayStudents();
             addNotification('All students deleted successfully');
+
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "All students have been deleted.",
+                icon: "success"
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "The students are safe :)",
+                icon: "error"
+            });
         }
     });
+});
+
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
         sortField = e.target.value;
