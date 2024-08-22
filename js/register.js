@@ -1,8 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Loader Function
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
+
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 2000); // Hide after 2 seconds
+    }
+
     const registerForm = document.getElementById('registerForm');
 
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        showLoader(); // Show the loader when the form is submitted
 
         const validationRules = {
             username: [
@@ -37,6 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
             if (existingUsers.some(user => user.username === username)) {
+                // Hide loader if there's an error
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    loader.style.display = 'none';
+                }, 2000);
+
                 // Toast for existing username
                 const Toast = Swal.mixin({
                     toast: true,
@@ -80,8 +98,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: 'Registration successful! You can now log in.'
             });
 
-            window.location.href = 'index.html';
+            // Redirect after successful registration
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000); // Ensure loader finishes before redirecting
         } else {
+            // Hide loader if there are errors
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.display = 'none';
+            }, 2000);
+
             displayErrors(errors);
         }
     });
