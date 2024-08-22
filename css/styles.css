@@ -207,7 +207,7 @@ body.dark-mode th {
   position: absolute;
   top: 0;
   transform: translatex(-50%);
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 0 0 20px 20px;
   background-size: 100% auto;
   background-repeat: no-repeat;
@@ -222,25 +222,25 @@ body.dark-mode th {
 }
 @keyframes lqt {
   0%, 100% {
-    background-image: linear-gradient(#FF3D00 40px, transparent 0);
+    background-image: linear-gradient(#007bff 40px, transparent 0);
     background-position: 0% 0px;
   }
   50% {
-    background-image: linear-gradient(#FF3D00 40px, transparent 0);
+    background-image: linear-gradient(#007bff 40px, transparent 0);
     background-position: 0% 40px;
   }
   50.1% {
-    background-image: linear-gradient(#FF3D00 40px, transparent 0);
+    background-image: linear-gradient(#007bff 40px, transparent 0);
     background-position: 0% -40px;
   }
 }
 @keyframes lqb {
   0% {
-    background-image: linear-gradient(#FF3D00 40px, transparent 0);
+    background-image: linear-gradient(#007bff 40px, transparent 0);
     background-position: 0 40px;
   }
   100% {
-    background-image: linear-gradient(#FF3D00 40px, transparent 0);
+    background-image: linear-gradient(#007bff 40px, transparent 0);
     background-position: 0 -40px;
   }
 }
