@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userInfo = document.getElementById('userInfo');
     userInfo.innerHTML = `
-        <h2>Welcome, ${loggedInUser} (${userRole})!</h2>
+        <h2>Welcome, ${loggedInUser} (${userRole})</h2>
         <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>  Logout</button>
     `;
 

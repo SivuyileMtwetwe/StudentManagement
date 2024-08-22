@@ -17,6 +17,9 @@ body {
     max-width: 600px;
 }
 
+input,select{
+    border-radius: 10px;
+}
 h1, h2, h3 {
     color: #333;
 }
@@ -36,6 +39,7 @@ button {
     background-color: #007bff;
     color: white;
     border: none;
+    border-radius: 15px;
     cursor: pointer;
     transition: background-color 0.3s;
 }
@@ -89,13 +93,6 @@ th {
     margin-top: 0.2rem;
 }
 
-.notification {
-    background-color: #4CAF50;
-    color: white;
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 4px;
-}
 
 .pagination {
     display: flex;
@@ -103,8 +100,9 @@ th {
     margin-top: 1rem;
 }
 
-.pagination button {
+.pagination button li {
     margin: 0 0.2rem;
+    color: #fff;
 }
 
 /* Dark mode styles */
@@ -124,9 +122,16 @@ body.dark-mode button {
     color: #fff;
     border: 1px solid #666;
 }
+body.dark-mode button {
+    background-color: #007bff;
+}
+
+body.dark-mode h1,body.dark-mode h2,body.dark-mode h3 {
+color: #ffffff;
+}
 
 body.dark-mode a {
-    color: #7cb7ff;
+    color: #ffffff;
 }
 
 body.dark-mode table {
@@ -154,6 +159,7 @@ body.dark-mode th {
 
     nav li {
         margin: 0.5rem 0;
+        color: #fff;
     }
 
     table {
