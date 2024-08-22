@@ -37,7 +37,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
             if (existingUsers.some(user => user.username === username)) {
-                alert('Username already exists. Please choose a different one.');
+                // Toast for existing username
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Username already exists. Please choose a different one.'
+                });
+
                 return;
             }
 
@@ -45,7 +62,24 @@ document.addEventListener('DOMContentLoaded', () => {
             existingUsers.push(newUser);
             localStorage.setItem('users', JSON.stringify(existingUsers));
 
-            alert('Registration successful! You can now log in.');
+            // Toast for successful registration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Registration successful! You can now log in.'
+            });
+
             window.location.href = 'index.html';
         } else {
             displayErrors(errors);
