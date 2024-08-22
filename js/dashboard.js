@@ -96,4 +96,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initially display the student list
     displayStudents();
 });
-
