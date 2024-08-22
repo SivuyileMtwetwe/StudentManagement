@@ -340,3 +340,39 @@ function addNotification(message) {
 
 // Initial call to display students when the page loads
 displayStudents();
+
+// Calculator functions
+function appendNumber(number) {
+    const display = document.getElementById('display');
+    display.value += number;
+}
+
+function clearDisplay() {
+    const display = document.getElementById('display');
+    display.value = '';
+}
+
+function calculate() {
+    const display = document.getElementById('display');
+    try {
+        display.value = eval(display.value); // Be cautious with eval
+    } catch (error) {
+        display.value = 'Error';
+    }
+}
+
+// Popover display logic
+document.getElementById('popoverTarget').addEventListener('click', (event) => {
+    const popover = document.getElementById('popover');
+    const rect = event.target.getBoundingClientRect();
+    popover.style.left = `${rect.left}px`;
+    popover.style.top = `${rect.bottom}px`;
+    popover.style.display = 'block';
+});
+
+document.addEventListener('click', (event) => {
+    const popover = document.getElementById('popover');
+    if (!popover.contains(event.target) && !event.target.matches('#popoverTarget')) {
+        popover.style.display = 'none';
+    }
+});
