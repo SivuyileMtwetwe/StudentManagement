@@ -55,7 +55,7 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
         <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
         <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
         <button id='deleteAll'><i class="fa-solid fa-trash"> Delete All</i></button>
-       <button id="popoverTarget">Calculator</button>
+        <button id="popoverTarget">Calculator</button>
         <table>
             <thead>
                 <tr>
@@ -93,51 +93,51 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             ).join('')}
         </div>
     `;
-    document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV)
+
+    document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV);
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
         displayStudents(e.target.value, sortField, sortAscending);
-
     });
+
     document.getElementById('deleteAll').addEventListener('click', () => {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: "btn btn-success",
-            cancelButton: "btn btn-danger"
-        },
-        buttonsStyling: false
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+
+        swalWithBootstrapButtons.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                students = [];
+                saveStudents();
+                displayStudents();
+                addNotification('All students deleted successfully');
+
+                swalWithBootstrapButtons.fire({
+                    title: "Deleted!",
+                    text: "All students have been deleted.",
+                    icon: "success"
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                swalWithBootstrapButtons.fire({
+                    title: "Cancelled",
+                    text: "The students are safe :)",
+                    icon: "error"
+                });
+            }
+        });
     });
-
-    swalWithBootstrapButtons.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            students = [];
-            saveStudents();
-            displayStudents();
-            addNotification('All students deleted successfully');
-
-            swalWithBootstrapButtons.fire({
-                title: "Deleted!",
-                text: "All students have been deleted.",
-                icon: "success"
-            });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swalWithBootstrapButtons.fire({
-                title: "Cancelled",
-                text: "The students are safe :)",
-                icon: "error"
-            });
-        }
-    });
-});
-
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
         sortField = e.target.value;
@@ -145,6 +145,8 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
     });
 
     document.getElementById('exportBtn').addEventListener('click', exportToCSV);
+
+    document.getElementById('popoverTarget').addEventListener('click', displayStats);
 }
 
 function searchStudents(query) {
@@ -200,7 +202,6 @@ function deleteStudentHandler(id) {
     });
 }
 
-
 function editStudent(id) {
     const student = students.find(s => s.id === id);
     if (student) {
@@ -222,7 +223,7 @@ function editStudent(id) {
                 <button type="submit"><i class="fa-solid fa-file-pen"></i>  Update Student</button>
             </form>
         `;
-        
+
         document.getElementById('editStudentForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const updatedInfo = {
@@ -240,286 +241,102 @@ function editStudent(id) {
 
         document.getElementById('addPerformanceBtn').addEventListener('click', () => {
             const subject = document.getElementById('newSubject').value;
-            const score = parseInt(document.getElementById('newScore').value);
+            const score = document.getElementById('newScore').value;
             if (subject && score) {
-                if (addPerformanceRecord(id, subject, score)) {
-                    addNotification('Performance record added successfully!');
-                    editStudent(id); // Refresh the edit form
-                } else {
-                    addNotification('Failed to add performance record.');
-                }
-            } else {
-                addNotification('Please enter both subject and score.');
+                student.performance.push({ subject, score, date: new Date().toISOString() });
+                updateStudent(id, { performance: student.performance });
+                displayStudents();
+                addNotification('Performance record added.');
             }
         });
     }
 }
 
-function addPerformanceRecord(studentId, subject, score) {
-    const student = students.find(s => s.id === studentId);
-    if (student) {
-        student.performance.push({ subject, score, date: new Date().toISOString() });
-        saveStudents();
-        return true;
-    }
-    return false;
+function importStudentsFromCSV() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const contents = e.target.result;
+                // Process CSV contents
+                // Assuming CSV structure: name,age,class,subject1,score1,subject2,score2,...
+                const rows = contents.split('\n');
+                rows.forEach(row => {
+                    const cells = row.split(',');
+                    if (cells.length > 3) {
+                        const [name, age, className, ...performance] = cells;
+                        const studentPerformance = [];
+                        for (let i = 0; i < performance.length; i += 2) {
+                            if (performance[i] && performance[i + 1]) {
+                                studentPerformance.push({ subject: performance[i], score: performance[i + 1], date: new Date().toISOString() });
+                            }
+                        }
+                        addStudent(name, parseInt(age), className, studentPerformance);
+                    }
+                });
+                displayStudents();
+                addNotification('Students imported successfully.');
+            };
+            reader.readAsText(file);
+        }
+    });
+    input.click();
 }
 
 function exportToCSV() {
-    const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
-        + students.map(s => `${s.name},${s.age},${s.class},${s.performance.map(p => p.subject).join('|')},${s.performance.map(p => p.score).join('|')}`).join("\n");
-
+    let csvContent = "data:text/csv;charset=utf-8," + "Name,Age,Class,Subjects,Scores\n";
+    students.forEach(student => {
+        const subjects = student.performance.map(p => p.subject).join(';');
+        const scores = student.performance.map(p => p.score).join(';');
+        csvContent += `${student.name},${student.age},${student.class},${subjects},${scores}\n`;
+    });
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "students.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'students.csv');
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
-    addNotification('CSV file exported successfully');
 }
 
-function importStudentsFromCSV() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.csv';
-    fileInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            Papa.parse(file, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                    const newStudents = results.data.map((row) => {
-                        const subjects = row.Subjects.split('|');
-                        const scores = row.Scores.split('|');
-                        const performance = subjects.map((subject, index) => ({
-                            subject,
-                            score: parseInt(scores[index]),
-                            date: new Date().toISOString()
-                        }));
-                        return {
-                            id: Date.now() + Math.random(),
-                            name: row.Name,
-                            age: parseInt(row.Age),
-                            class: row.Class,
-                            performance
-                        };
-                    });
-                    students.push(...newStudents);
-                    saveStudents();
-                    displayStudents();
-                    addNotification('Students imported successfully!');
-                },
-            });
-        }
-    });
-    fileInput.click();
-}
-
-
-function calculateStats() {
-    const totalStudents = students.length;
-    const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
-    const classDistribution = students.reduce((dist, student) => {
-        dist[student.class] = (dist[student.class] || 0) + 1;
-        return dist;
-    }, {});
-
-    return {
-        totalStudents,
-        averageAge: averageAge.toFixed(2),
-        classDistribution
-    };
-}
 function displayStats() {
-    const stats = calculateStats();
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Student Statistics</h2>
-        <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-            <div style="width: 300px; height: 300px;">
-                <canvas id="performanceDistributionChart"></canvas>
-            </div>
-            <div style="width: 300px; height: 300px;">
-                <canvas id="classPerformanceChart"></canvas>
-            </div>
-        </div>
-        <p>Total Students: ${stats.totalStudents}</p>
-        <p>Average Age: ${stats.averageAge}</p>
-    `;
-
-    // Performance distribution chart
-    const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
-    new Chart(performanceCtx, {
-        type: 'bar',
-        data: {
-            labels: ['0-50', '51-70', '71-80', '81-90', '91-100'],
-            datasets: [{
-                label: 'Performance Distribution',
-                data: [
-                    students.filter(s => s.performance.some(p => p.score >= 0 && p.score <= 50)).length,
-                    students.filter(s => s.performance.some(p => p.score >= 51 && p.score <= 70)).length,
-                    students.filter(s => s.performance.some(p => p.score >= 71 && p.score <= 80)).length,
-                    students.filter(s => s.performance.some(p => p.score >= 81 && p.score <= 90)).length,
-                    students.filter(s => s.performance.some(p => p.score >= 91 && p.score <= 100)).length
-                ],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)'
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Students'
-                    }
-                }
-            }
-        }
-    });
-
-    // Class performance chart
-    const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
-    new Chart(classPerformanceCtx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(stats.classPerformanceDistribution),
-            datasets: [
-                {
-                    label: 'Average Performance',
-                    data: Object.values(stats.classPerformanceDistribution).map(c => c.averageScore.toFixed(2)),
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                },
-                {
-                    label: 'Number of Students',
-                    data: Object.values(stats.classPerformanceDistribution).map(c => c.count),
-                    backgroundColor: 'rgba(255, 206, 86, 0.6)'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Performance Score / Number of Students'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
+    const popover = document.getElementById('popover');
+    const targetRect = document.getElementById('popoverTarget').getBoundingClientRect();
+    popover.style.display = popover.style.display === 'none' ? 'block' : 'none';
+    popover.style.top = `${targetRect.bottom + window.scrollY}px`;
+    popover.style.left = `${targetRect.left + window.scrollX}px`;
 }
 
-function calculateStats() {
-    const totalStudents = students.length;
-    const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
-
-    const classPerformanceDistribution = students.reduce((dist, student) => {
-        const { class: studentClass } = student;
-        const studentPerformance = student.performance.map(p => p.score);
-        const averageScore = studentPerformance.length > 0 ? studentPerformance.reduce((sum, score) => sum + score, 0) / studentPerformance.length : 0;
-
-        if (dist[studentClass]) {
-            dist[studentClass].count += 1;
-            dist[studentClass].averageScore = ((dist[studentClass].averageScore * (dist[studentClass].count - 1)) + averageScore) / dist[studentClass].count;
-        } else {
-            dist[studentClass] = {
-                count: 1,
-                averageScore
-            };
-        }
-
-        return dist;
-    }, {});
-
-    return {
-        totalStudents,
-        averageAge: averageAge.toFixed(2),
-        classPerformanceDistribution
-    };
+function appendNumber(number) {
+    const display = document.getElementById('display');
+    display.value += number;
 }
 
-function displayGroupStats() {
-    const stats = calculateStats();
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Group Statistics</h2>
-        <p>Total Students: ${stats.totalStudents}</p>
-        <p>Number of Classes: ${Object.keys(stats.classPerformanceDistribution).length}</p>
-        <h3>Students per Class:</h3>
-        <ul>
-            ${Object.entries(stats.classPerformanceDistribution).map(([className, count]) => 
-                `<li>${className}: ${count} student(s)</li>`
-            ).join('')}
-        </ul>
-    `;
+function calculate() {
+    const display = document.getElementById('display');
+    try {
+        display.value = eval(display.value);
+    } catch {
+        display.value = 'Error';
+    }
 }
 
-function advancedFilter() {
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Advanced Filter</h2>
-        <form id="advancedFilterForm">
-            <label>
-                Age Range:
-                <input type="number" id="minAge" placeholder="Min Age">
-                <input type="number" id="maxAge" placeholder="Max Age">
-            </label>
-            <label>
-                Class:
-                <select id="classFilter">
-                    <option value="">All Classes</option>
-                    ${[...new Set(students.map(s => s.class))].map(c => `<option value="${c}">${c}</option>`).join('')}
-                </select>
-            </label>
-            <button type="submit">Apply Filter</button>
-        </form>
-        <div id="filterResults"></div>
-    `;
-
-    document.getElementById('advancedFilterForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const minAge = document.getElementById('minAge').value;
-        const maxAge = document.getElementById('maxAge').value;
-        const classFilter = document.getElementById('classFilter').value;
-
-        const filteredStudents = students.filter(student => 
-            (!minAge || student.age >= minAge) &&
-            (!maxAge || student.age <= maxAge) &&
-            (!classFilter || student.class === classFilter)
-        );
-
-        document.getElementById('filterResults').innerHTML = `
-            <h3>Filtered Results (${filteredStudents.length} students)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Class</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredStudents.map(student => `
-                        <tr>
-                            <td>${student.name}</td>
-                            <td>${student.age}</td>
-                            <td>${student.class}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    });
+function clearDisplay() {
+    document.getElementById('display').value = '';
 }
+
+function addNotification(message) {
+    const notificationDiv = document.createElement('div');
+    notificationDiv.className = 'notification';
+    notificationDiv.innerText = message;
+    document.body.appendChild(notificationDiv);
+    setTimeout(() => {
+        notificationDiv.remove();
+    }, 3000);
+}
+
+// Initial call to display students when the page loads
+displayStudents();
