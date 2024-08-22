@@ -55,6 +55,9 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
         <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
         <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
         <button id='deleteAll'><i class="fa-solid fa-trash"> Delete All</i></button>
+         <button class="bg-yellow-500 text-white px-4 py-2 rounded flex items-center" onclick="openCalculatorModal()">
+                    <i class="fas fa-calculator mr-2"></i> Calculator
+                </button>
         <table>
             <thead>
                 <tr>
@@ -447,4 +450,78 @@ function calculateStats() {
         averageAge: averageAge.toFixed(2),
         classPerformanceDistribution
     };
+}
+
+function displayGroupStats() {
+    const stats = calculateStats();
+    const contentDiv = document.getElementById('content');
+    contentDiv.innerHTML = `
+        <h2>Group Statistics</h2>
+        <p>Total Students: ${stats.totalStudents}</p>
+        <p>Number of Classes: ${Object.keys(stats.classPerformanceDistribution).length}</p>
+        <h3>Students per Class:</h3>
+        <ul>
+            ${Object.entries(stats.classPerformanceDistribution).map(([className, count]) => 
+                `<li>${className}: ${count} student(s)</li>`
+            ).join('')}
+        </ul>
+    `;
+}
+
+function advancedFilter() {
+    const contentDiv = document.getElementById('content');
+    contentDiv.innerHTML = `
+        <h2>Advanced Filter</h2>
+        <form id="advancedFilterForm">
+            <label>
+                Age Range:
+                <input type="number" id="minAge" placeholder="Min Age">
+                <input type="number" id="maxAge" placeholder="Max Age">
+            </label>
+            <label>
+                Class:
+                <select id="classFilter">
+                    <option value="">All Classes</option>
+                    ${[...new Set(students.map(s => s.class))].map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+            </label>
+            <button type="submit">Apply Filter</button>
+        </form>
+        <div id="filterResults"></div>
+    `;
+
+    document.getElementById('advancedFilterForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const minAge = document.getElementById('minAge').value;
+        const maxAge = document.getElementById('maxAge').value;
+        const classFilter = document.getElementById('classFilter').value;
+
+        const filteredStudents = students.filter(student => 
+            (!minAge || student.age >= minAge) &&
+            (!maxAge || student.age <= maxAge) &&
+            (!classFilter || student.class === classFilter)
+        );
+
+        document.getElementById('filterResults').innerHTML = `
+            <h3>Filtered Results (${filteredStudents.length} students)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Class</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredStudents.map(student => `
+                        <tr>
+                            <td>${student.name}</td>
+                            <td>${student.age}</td>
+                            <td>${student.class}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    });
 }

@@ -90,9 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     advancedFilterBtn.addEventListener('click', () => {
         showLoader(); // Show the loader when the button is clicked
-        advancedFilterBtn();
+        advancedFilter();
     });
 
     // Initially display the student list
     displayStudents();
 });
+
