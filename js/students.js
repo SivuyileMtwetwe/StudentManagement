@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
 function addStudent(name, age, className, performance = []) {
@@ -358,8 +357,6 @@ function displayStats() {
     new Chart(performanceCtx, {
         type: 'bar',
         data: {
-=======
->>>>>>> aacc102fef419d295e0ec4f6caba4b0b9cd0b018
             labels: ['0-50', '51-70', '71-80', '81-90', '91-100'],
             datasets: [{
                 label: 'Performance Distribution',
@@ -527,8 +524,4 @@ function advancedFilter() {
             </table>
         `;
     });
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> aacc102fef419d295e0ec4f6caba4b0b9cd0b018

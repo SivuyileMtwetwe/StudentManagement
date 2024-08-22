@@ -95,9 +95,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initially display the student list
     displayStudents();
-<<<<<<< HEAD
 });
 
-=======
-});
->>>>>>> aacc102fef419d295e0ec4f6caba4b0b9cd0b018
