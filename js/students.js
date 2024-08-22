@@ -162,12 +162,43 @@ function sortStudents(studentsToSort, field, ascending = true) {
 }
 
 function deleteStudentHandler(id) {
-    if (confirm('Are you sure you want to delete this student?')) {
-        deleteStudent(id);
-        displayStudents();
-        addNotification('Student deleted successfully');
-    }
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteStudent(id);
+            displayStudents();
+            addNotification('Student deleted successfully');
+
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "The student has been deleted.",
+                icon: "success"
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "The student is safe :)",
+                icon: "error"
+            });
+        }
+    });
 }
+
 
 function editStudent(id) {
     const student = students.find(s => s.id === id);
