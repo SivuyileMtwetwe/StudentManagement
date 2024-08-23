@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Loader Function
     function showLoader() {
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
 
         setTimeout(() => {
             loader.style.display = 'none';
-        }, 2000); // Hide after 2 seconds
+        }, 2000); 
     }
 
     const loggedInUser = sessionStorage.getItem('loggedInUser');
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     addStudentBtn.addEventListener('click', () => {
-        showLoader(); // Show the loader when the button is clicked
+        showLoader();
 
         content.innerHTML = `
             <h2>Add New Student</h2>
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('addStudentForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            showLoader(); // Show the loader when the form is submitted
+            showLoader();
 
             const name = document.getElementById('studentName').value;
             const age = parseInt(document.getElementById('studentAge').value);
@@ -74,26 +73,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     viewStudentsBtn.addEventListener('click', () => {
-        showLoader(); // Show the loader when the button is clicked
+        showLoader(); //
         displayStudents();
     });
 
     viewStatsBtn.addEventListener('click', () => {
-        showLoader(); // Show the loader when the button is clicked
+        showLoader();
         displayStats();
     });
 
     groupStatsBtn.addEventListener('click', () => {
-        showLoader(); // Show the loader when the button is clicked
+        showLoader();
         displayGroupStats();
     });
 
     advancedFilterBtn.addEventListener('click', () => {
-        showLoader(); // Show the loader when the button is clicked
+        showLoader();
         advancedFilter();
     });
 
-    // Initially display the student list
+
     displayStudents();
 });
 

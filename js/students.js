@@ -246,7 +246,7 @@ function editStudent(id) {
             if (subject && score) {
                 if (addPerformanceRecord(id, subject, score)) {
                     addNotification('Performance record added successfully!');
-                    editStudent(id); // Refresh the edit form
+                    editStudent(id); 
                 } else {
                     addNotification('Failed to add performance record.');
                 }
@@ -352,7 +352,7 @@ function displayStats() {
         <p>Average Age: ${stats.averageAge}</p>
     `;
 
-    // Performance distribution chart
+    
     const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
     new Chart(performanceCtx, {
         type: 'bar',
@@ -384,7 +384,7 @@ function displayStats() {
         }
     });
 
-    // Class performance chart
+    
     const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
     new Chart(classPerformanceCtx, {
         type: 'bar',
