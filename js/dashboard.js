@@ -1,13 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    function showLoader() {
-        const loader = document.getElementById('loader');
-        loader.style.display = 'block';
-
-        setTimeout(() => {
-            loader.style.display = 'none';
-        }, 2000); 
-    }
-
     const loggedInUser = sessionStorage.getItem('loggedInUser');
     const userRole = sessionStorage.getItem('userRole');
 
@@ -18,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const userInfo = document.getElementById('userInfo');
     userInfo.innerHTML = `
-        <h2>Welcome, ${loggedInUser} (${userRole})</h2>
-        <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>  Logout</button>
+        <h2>Welcome, ${loggedInUser} (${userRole})!</h2>
+        <button id="logoutBtn">Logout</button>
     `;
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -42,26 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     addStudentBtn.addEventListener('click', () => {
-        showLoader();
-
         content.innerHTML = `
             <h2>Add New Student</h2>
             <form id="addStudentForm">
                 <input type="text" id="studentName" placeholder="Student Name" required>
                 <input type="number" id="studentAge" placeholder="Age" required>
                 <input type="text" id="studentClass" placeholder="Class" required>
-                <button type="submit"><i class="fa-solid fa-user-plus"></i>  Add Student</button>
+                <button type="submit">Add Student</button>
             </form>
         `;
-
+        
         document.getElementById('addStudentForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            showLoader();
-
             const name = document.getElementById('studentName').value;
             const age = parseInt(document.getElementById('studentAge').value);
             const className = document.getElementById('studentClass').value;
-
+            
             const newStudent = addStudent(name, age, className);
             if (newStudent) {
                 addNotification('Student added successfully!');
@@ -72,27 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    viewStudentsBtn.addEventListener('click', () => {
-        showLoader(); //
-        displayStudents();
-    });
+    viewStudentsBtn.addEventListener('click', () => displayStudents());
+    viewStatsBtn.addEventListener('click', displayStats);
+    groupStatsBtn.addEventListener('click', displayGroupStats);
+    advancedFilterBtn.addEventListener('click', advancedFilter);
 
-    viewStatsBtn.addEventListener('click', () => {
-        showLoader();
-        displayStats();
-    });
-
-    groupStatsBtn.addEventListener('click', () => {
-        showLoader();
-        displayGroupStats();
-    });
-
-    advancedFilterBtn.addEventListener('click', () => {
-        showLoader();
-        advancedFilter();
-    });
-
-
+    // Initially display the student list
     displayStudents();
 });
-
