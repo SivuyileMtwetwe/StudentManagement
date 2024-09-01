@@ -52,13 +52,20 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             <option value="age" ${sortField === 'age' ? 'selected' : ''}>Sort by Age</option>
             <option value="class" ${sortField === 'class' ? 'selected' : ''}>Sort by Class</option>
         </select>
-        <button id="exportBtn">Export to CSV</button>
+        <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
+        <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
+        <button id='deleteAll'><i class="fa-solid fa-trash"> Delete All</i></button>
+         <button class="bg-yellow-500 text-white px-4 py-2 rounded flex items-center" onclick="openCalculatorModal()">
+                    <i class="fas fa-calculator mr-2"></i> Calculator
+                </button>
         <table>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Age</th>
                     <th>Class</th>
+                    <th>Subjects</th>
+                    <th>Scores</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -69,8 +76,14 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
                         <td>${student.age}</td>
                         <td>${student.class}</td>
                         <td>
-                            <button onclick="editStudent(${student.id})">Edit</button>
-                            <button onclick="deleteStudentHandler(${student.id})">Delete</button>
+                            ${student.performance.map(p => p.subject).join(', ')}
+                        </td>
+                        <td>
+                            ${student.performance.map(p => p.score).join(', ')}
+                        </td>
+                        <td>
+                            <button onclick="editStudent(${student.id})"><i class="fa-solid fa-pen-to-square"></i>  Edit</button>
+                            <button onclick="deleteStudentHandler(${student.id})"><i class="fa-solid fa-trash"></i>  Delete</button>
                         </td>
                     </tr>
                 `).join('')}
@@ -82,10 +95,51 @@ function displayStudents(searchQuery = '', sortField = 'name', sortAscending = t
             ).join('')}
         </div>
     `;
+    document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV)
 
     document.getElementById('searchInput').addEventListener('input', (e) => {
         displayStudents(e.target.value, sortField, sortAscending);
+
     });
+    document.getElementById('deleteAll').addEventListener('click', () => {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            students = [];
+            saveStudents();
+            displayStudents();
+            addNotification('All students deleted successfully');
+
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "All students have been deleted.",
+                icon: "success"
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "The students are safe :)",
+                icon: "error"
+            });
+        }
+    });
+});
+
 
     document.getElementById('sortSelect').addEventListener('change', (e) => {
         sortField = e.target.value;
@@ -111,12 +165,43 @@ function sortStudents(studentsToSort, field, ascending = true) {
 }
 
 function deleteStudentHandler(id) {
-    if (confirm('Are you sure you want to delete this student?')) {
-        deleteStudent(id);
-        displayStudents();
-        addNotification('Student deleted successfully');
-    }
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-danger"
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: "Are you sure?",
+        text: "This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteStudent(id);
+            displayStudents();
+            addNotification('Student deleted successfully');
+
+            swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "The student has been deleted.",
+                icon: "success"
+            });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire({
+                title: "Cancelled",
+                text: "The student is safe :)",
+                icon: "error"
+            });
+        }
+    });
 }
+
 
 function editStudent(id) {
     const student = students.find(s => s.id === id);
@@ -135,8 +220,8 @@ function editStudent(id) {
                 <h3>Add Performance Record</h3>
                 <input type="text" id="newSubject" placeholder="Subject">
                 <input type="number" id="newScore" placeholder="Score">
-                <button type="button" id="addPerformanceBtn">Add Performance</button>
-                <button type="submit">Update Student</button>
+                <button type="button" id="addPerformanceBtn"><i class="fa-solid fa-circle-plus"></i>  Add Performance</button>
+                <button type="submit"><i class="fa-solid fa-file-pen"></i>  Update Student</button>
             </form>
         `;
         
@@ -183,9 +268,8 @@ function addPerformanceRecord(studentId, subject, score) {
 }
 
 function exportToCSV() {
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + "Name,Age,Class\n"
-        + students.map(s => `${s.name},${s.age},${s.class}`).join("\n");
+    const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
+        + students.map(s => `${s.name},${s.age},${s.class},${s.performance.map(p => p.subject).join('|')},${s.performance.map(p => p.score).join('|')}`).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -196,6 +280,46 @@ function exportToCSV() {
     document.body.removeChild(link);
     addNotification('CSV file exported successfully');
 }
+
+function importStudentsFromCSV() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.csv';
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            Papa.parse(file, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    const newStudents = results.data.map((row) => {
+                        const subjects = row.Subjects.split('|');
+                        const scores = row.Scores.split('|');
+                        const performance = subjects.map((subject, index) => ({
+                            subject,
+                            score: parseInt(scores[index]),
+                            date: new Date().toISOString()
+                        }));
+                        return {
+                            id: Date.now() + Math.random(),
+                            name: row.Name,
+                            age: parseInt(row.Age),
+                            class: row.Class,
+                            performance
+                        };
+                    });
+                    students.push(...newStudents);
+                    saveStudents();
+                    displayStudents();
+                    addNotification('Students imported successfully!');
+                },
+            });
+        }
+    });
+    fileInput.click();
+}
+
 
 function calculateStats() {
     const totalStudents = students.length;
@@ -211,7 +335,6 @@ function calculateStats() {
         classDistribution
     };
 }
-
 function displayStats() {
     const stats = calculateStats();
     const contentDiv = document.getElementById('content');
@@ -219,29 +342,30 @@ function displayStats() {
         <h2>Student Statistics</h2>
         <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
             <div style="width: 300px; height: 300px;">
-                <canvas id="ageDistributionChart"></canvas>
+                <canvas id="performanceDistributionChart"></canvas>
             </div>
             <div style="width: 300px; height: 300px;">
-                <canvas id="classDistributionChart"></canvas>
+                <canvas id="classPerformanceChart"></canvas>
             </div>
         </div>
         <p>Total Students: ${stats.totalStudents}</p>
         <p>Average Age: ${stats.averageAge}</p>
     `;
 
-    // Age distribution chart
-    const ageCtx = document.getElementById('ageDistributionChart').getContext('2d');
-    new Chart(ageCtx, {
+    // Performance distribution chart
+    const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
+    new Chart(performanceCtx, {
         type: 'bar',
         data: {
-            labels: ['<18', '18-21', '22-25', '26+'],
+            labels: ['0-50', '51-70', '71-80', '81-90', '91-100'],
             datasets: [{
-                label: 'Age Distribution',
+                label: 'Performance Distribution',
                 data: [
-                    students.filter(s => s.age < 18).length,
-                    students.filter(s => s.age >= 18 && s.age <= 21).length,
-                    students.filter(s => s.age >= 22 && s.age <= 25).length,
-                    students.filter(s => s.age > 25).length
+                    students.filter(s => s.performance.some(p => p.score >= 0 && p.score <= 50)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 51 && p.score <= 70)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 71 && p.score <= 80)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 81 && p.score <= 90)).length,
+                    students.filter(s => s.performance.some(p => p.score >= 91 && p.score <= 100)).length
                 ],
                 backgroundColor: 'rgba(75, 192, 192, 0.6)'
             }]
@@ -260,32 +384,72 @@ function displayStats() {
         }
     });
 
-    // Class distribution chart
-    const classCtx = document.getElementById('classDistributionChart').getContext('2d');
-    new Chart(classCtx, {
-        type: 'pie',
+    // Class performance chart
+    const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
+    new Chart(classPerformanceCtx, {
+        type: 'bar',
         data: {
-            labels: Object.keys(stats.classDistribution),
-            datasets: [{
-                data: Object.values(stats.classDistribution),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)'
-                ]
-            }]
+            labels: Object.keys(stats.classPerformanceDistribution),
+            datasets: [
+                {
+                    label: 'Average Performance',
+                    data: Object.values(stats.classPerformanceDistribution).map(c => c.averageScore.toFixed(2)),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                },
+                {
+                    label: 'Number of Students',
+                    data: Object.values(stats.classPerformanceDistribution).map(c => c.count),
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                }
+            ]
         },
         options: {
             responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Performance Score / Number of Students'
+                    }
+                }
+            },
             plugins: {
                 legend: {
-                    position: 'right',
+                    position: 'right'
                 }
             }
         }
     });
+}
+
+function calculateStats() {
+    const totalStudents = students.length;
+    const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
+
+    const classPerformanceDistribution = students.reduce((dist, student) => {
+        const { class: studentClass } = student;
+        const studentPerformance = student.performance.map(p => p.score);
+        const averageScore = studentPerformance.length > 0 ? studentPerformance.reduce((sum, score) => sum + score, 0) / studentPerformance.length : 0;
+
+        if (dist[studentClass]) {
+            dist[studentClass].count += 1;
+            dist[studentClass].averageScore = ((dist[studentClass].averageScore * (dist[studentClass].count - 1)) + averageScore) / dist[studentClass].count;
+        } else {
+            dist[studentClass] = {
+                count: 1,
+                averageScore
+            };
+        }
+
+        return dist;
+    }, {});
+
+    return {
+        totalStudents,
+        averageAge: averageAge.toFixed(2),
+        classPerformanceDistribution
+    };
 }
 
 function displayGroupStats() {
@@ -294,10 +458,10 @@ function displayGroupStats() {
     contentDiv.innerHTML = `
         <h2>Group Statistics</h2>
         <p>Total Students: ${stats.totalStudents}</p>
-        <p>Number of Classes: ${Object.keys(stats.classDistribution).length}</p>
+        <p>Number of Classes: ${Object.keys(stats.classPerformanceDistribution).length}</p>
         <h3>Students per Class:</h3>
         <ul>
-            ${Object.entries(stats.classDistribution).map(([className, count]) => 
+            ${Object.entries(stats.classPerformanceDistribution).map(([className, count]) => 
                 `<li>${className}: ${count} student(s)</li>`
             ).join('')}
         </ul>

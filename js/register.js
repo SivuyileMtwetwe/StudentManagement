@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('registerForm');
+    // Loader Function
+    function showLoader() {
+        const loader = document.getElementById('loader');
+        loader.style.display = 'block';
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-        }
-    });
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 2000); // Hide after 2 seconds
+    }
+
+    const registerForm = document.getElementById('registerForm');
 
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        
+        showLoader(); // Show the loader when the form is submitted
 
         const validationRules = {
             username: [
@@ -49,10 +49,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
             if (existingUsers.some(user => user.username === username)) {
-                Toast.fire({
-                    icon: "error",
-                    title: "Username already exists. Please choose a different one."
+                // Hide loader if there's an error
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    loader.style.display = 'none';
+                }, 2000);
+
+                // Toast for existing username
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
                 });
+
+                Toast.fire({
+                    icon: 'error',
+                    title: 'Username already exists. Please choose a different one.'
+                });
+
                 return;
             }
 
@@ -60,13 +80,35 @@ document.addEventListener('DOMContentLoaded', () => {
             existingUsers.push(newUser);
             localStorage.setItem('users', JSON.stringify(existingUsers));
 
-            Toast.fire({
-                icon: "success",
-                title: "Registration successful! You can now log in."
-            }).then(() => {
-                window.location.href = 'index.html';
+            // Toast for successful registration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
             });
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Registration successful! You can now log in.'
+            });
+
+            // Redirect after successful registration
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000); // Ensure loader finishes before redirecting
         } else {
+            // Hide loader if there are errors
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.display = 'none';
+            }, 2000);
+
             displayErrors(errors);
         }
     });

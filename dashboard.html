@@ -6,25 +6,32 @@
     <title>Student Management System - Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
+
+<div id="loader" class="loader" style="display: none;"></div>
+
     <div id="userInfo"></div>
-    <div id="notificationArea"></div>
     <nav>
         <ul>
-            <li><a href="#" id="addStudentBtn">Add Student</a></li>
-            <li><a href="#" id="viewStudentsBtn">View Students</a></li>
-            <li><a href="#" id="viewStatsBtn">View Stats</a></li>
-            <li><a href="#" id="groupStatsBtn">Group Stats</a></li>
-            <li><a href="#" id="advancedFilterBtn">Advanced Filter</a></li>
+            <li><a href="#" id="addStudentBtn"><i class="fa-solid fa-user-large"></i>  Add Student</a></li>
+            <li><a href="#" id="viewStudentsBtn"><i class="fa-solid fa-eye"></i>  View Students</a></li>
+            <li><a href="#" id="viewStatsBtn"><i class="fa-solid fa-chart-column"></i>  View Stats</a></li>
+            <li><a href="#" id="groupStatsBtn"><i class="fa-solid fa-chart-pie"></i>  Group Stats</a></li>
+            <li><a href="#" id="advancedFilterBtn"><i class="fa-solid fa-filter"></i>  Advanced Filter</a></li>
         </ul>
     </nav>
     <div id="content">
         <!-- Content will be dynamically loaded here -->
     </div>
+    
     <script src="js/dashboard.js"></script>
     <script src="js/students.js"></script>
+    <script src="https://kit.fontawesome.com/e086fa8a79.js" crossorigin="anonymous"></script>
     <script src="js/notifications.js"></script>
     <script src="js/darkMode.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
