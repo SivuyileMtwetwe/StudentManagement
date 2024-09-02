@@ -1,10 +1,21 @@
 let notifications = [];
 
-function addNotification(message) {
-    const id = Date.now();
-    notifications.push({ id, message });
-    displayNotifications();
-    setTimeout(() => removeNotification(id), 5000); // Auto-remove after 5 seconds
+function addNotification(message, icon = 'success') {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    Toast.fire({
+        icon: icon,
+        title: message
+    });
 }
 
 function removeNotification(id) {

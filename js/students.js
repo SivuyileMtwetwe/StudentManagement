@@ -4,6 +4,7 @@ function addStudent(name, age, className, performance = []) {
     const newStudent = { id: Date.now(), name, age, class: className, performance };
     students.push(newStudent);
     saveStudents();
+    displayStudents()
     return newStudent;
 }
 
@@ -16,6 +17,7 @@ function updateStudent(id, updatedInfo) {
     if (index !== -1) {
         students[index] = { ...students[index], ...updatedInfo };
         saveStudents();
+        displayStudents()
         return true;
     }
     return false;
@@ -461,12 +463,13 @@ function displayGroupStats() {
         <p>Number of Classes: ${Object.keys(stats.classPerformanceDistribution).length}</p>
         <h3>Students per Class:</h3>
         <ul>
-            ${Object.entries(stats.classPerformanceDistribution).map(([className, count]) => 
-                `<li>${className}: ${count} student(s)</li>`
+            ${Object.entries(stats.classPerformanceDistribution).map(([className, data]) => 
+                `<li>${className}: ${data.count} student(s)</li>`
             ).join('')}
         </ul>
     `;
 }
+
 
 function advancedFilter() {
     const contentDiv = document.getElementById('content');
