@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/student-management', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://sivuyilemtwetwe:gFZQYA4XfZYjFwws@cluster0.ig7vu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Define a Student model
 const Student = mongoose.model('Student', new mongoose.Schema({

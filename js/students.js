@@ -528,3 +528,10 @@ function advancedFilter() {
         `;
     });
 }
+
+
+async function fetchStudents() {
+    const response = await fetch('http://localhost:5000/students');
+    const students = await response.json();
+    displayStudents(students); // Adjust this to display fetched students
+}
