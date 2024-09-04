@@ -1,4 +1,4 @@
-
+// Fetch students from the server and display them
 async function fetchStudents() {
     try {
         const response = await fetch('http://localhost:5000/students');
@@ -10,7 +10,7 @@ async function fetchStudents() {
     }
 }
 
-
+// Add a new student
 async function addStudent(name, age, className, performance = []) {
     try {
         const newStudent = { name, age, class: className, performance };
@@ -20,7 +20,7 @@ async function addStudent(name, age, className, performance = []) {
             body: JSON.stringify(newStudent)
         });
         const savedStudent = await response.json();
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list
         return savedStudent;
     } catch (error) {
         console.error('Error adding student:', error);
@@ -28,7 +28,7 @@ async function addStudent(name, age, className, performance = []) {
     }
 }
 
-
+// Update an existing student
 async function updateStudent(id, updatedInfo) {
     try {
         const response = await fetch(`http://localhost:5000/students/${id}`, {
@@ -37,7 +37,7 @@ async function updateStudent(id, updatedInfo) {
             body: JSON.stringify(updatedInfo)
         });
         const updatedStudent = await response.json();
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list
         return updatedStudent;
     } catch (error) {
         console.error('Error updating student:', error);
@@ -45,13 +45,13 @@ async function updateStudent(id, updatedInfo) {
     }
 }
 
-
+// Delete a student
 async function deleteStudent(id) {
     try {
         await fetch(`http://localhost:5000/students/${id}`, {
             method: 'DELETE'
         });
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list
         addNotification('Student deleted successfully', 'success');
     } catch (error) {
         console.error('Error deleting student:', error);
@@ -65,7 +65,7 @@ async function deleteAllStudents() {
         await fetch('http://localhost:5000/students', {
             method: 'DELETE'
         });
-        fetchStudents();
+        fetchStudents(); // Refresh the student list
         addNotification('All students deleted successfully', 'success');
     } catch (error) {
         console.error('Error deleting all students:', error);
@@ -73,7 +73,7 @@ async function deleteAllStudents() {
     }
 }
 
-
+// Display students in the table
 function displayStudents(students, searchQuery = '', sortField = 'name', sortAscending = true, page = 1, pageSize = 10) {
     let displayedStudents = searchQuery ? searchStudents(students, searchQuery) : students;
     displayedStudents = sortStudents(displayedStudents, sortField, sortAscending);
@@ -533,7 +533,7 @@ function addNotification(message, icon = 'success') {
 // }
 
 // // Initialize the student list on page load
-// fetchStudents();
+fetchStudents();
 
 // // Helper function to display notifications
 // function addNotification(message, type = 'success') {
