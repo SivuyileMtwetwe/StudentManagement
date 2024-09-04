@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Loader Function
+    
     function showLoader() {
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
 
         setTimeout(() => {
             loader.style.display = 'none';
-        }, 2000); // Hide after 2 seconds
+        }, 2000); 
     }
 
     const loginForm = document.getElementById('loginForm');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        showLoader(); // Show the loader when the form is submitted
+        showLoader(); 
 
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
@@ -23,13 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const user = users.find(u => u.username === username && u.password === password);
 
-        // Hide loader and show appropriate toast based on login result
+        
         setTimeout(() => {
             const loader = document.getElementById('loader');
             loader.style.display = 'none';
 
             if (user) {
-                // Toast for successful login
+                
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.setItem('userRole', user.role);
                 window.location.href = 'dashboard.html';
             } else {
-                // Toast for invalid credentials
+                
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -69,13 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     title: 'Invalid credentials. Please try again.'
                 });
             }
-        }, 2000); // Ensure loader finishes before showing the toast
+        }, 2000);
     });
 
     forgotPasswordLink.addEventListener('click', (e) => {
         e.preventDefault();
 
-        // Toast for forgot password functionality
+       
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',

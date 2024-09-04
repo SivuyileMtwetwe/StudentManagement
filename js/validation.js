@@ -38,7 +38,6 @@ function validateForm(formId, validationRules) {
 }
 
 function displayErrors(errors) {
-    // Clear previous error messages
     document.querySelectorAll('.error-message').forEach(el => el.remove());
 
     for (const field in errors) {
