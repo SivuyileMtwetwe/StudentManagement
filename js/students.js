@@ -1,4 +1,4 @@
-
+// Fetch students from the server and display them
 async function fetchStudents() {
     try {
         const response = await fetch('http://localhost:5000/students');
@@ -10,7 +10,7 @@ async function fetchStudents() {
     }
 }
 
-
+// Add a new student
 async function addStudent(name, age, className, performance = []) {
     try {
         const newStudent = { name, age, class: className, performance };
@@ -20,7 +20,7 @@ async function addStudent(name, age, className, performance = []) {
             body: JSON.stringify(newStudent)
         });
         const savedStudent = await response.json();
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list
         return savedStudent;
     } catch (error) {
         console.error('Error adding student:', error);
@@ -28,7 +28,7 @@ async function addStudent(name, age, className, performance = []) {
     }
 }
 
-
+// Update an existing student
 async function updateStudent(id, updatedInfo) {
     try {
         const response = await fetch(`http://localhost:5000/students/${id}`, {
@@ -37,7 +37,7 @@ async function updateStudent(id, updatedInfo) {
             body: JSON.stringify(updatedInfo)
         });
         const updatedStudent = await response.json();
-        fetchStudents(); 
+        fetchStudents(); // Refresh the student list
         return updatedStudent;
     } catch (error) {
         console.error('Error updating student:', error);
@@ -45,13 +45,13 @@ async function updateStudent(id, updatedInfo) {
     }
 }
 
-
+// Delete a student
 async function deleteStudent(id) {
     try {
         await fetch(`http://localhost:5000/students/${id}`, {
             method: 'DELETE'
         });
-        fetchStudents();
+        fetchStudents(); // Refresh the student list
         addNotification('Student deleted successfully', 'success');
     } catch (error) {
         console.error('Error deleting student:', error);
@@ -59,12 +59,13 @@ async function deleteStudent(id) {
     }
 }
 
+// Delete all students
 async function deleteAllStudents() {
     try {
         await fetch('http://localhost:5000/students', {
             method: 'DELETE'
         });
-        fetchStudents();
+        fetchStudents(); // Refresh the student list
         addNotification('All students deleted successfully', 'success');
     } catch (error) {
         console.error('Error deleting all students:', error);
@@ -72,7 +73,7 @@ async function deleteAllStudents() {
     }
 }
 
-
+// Display students in the table
 function displayStudents(students, searchQuery = '', sortField = 'name', sortAscending = true, page = 1, pageSize = 10) {
     let displayedStudents = searchQuery ? searchStudents(students, searchQuery) : students;
     displayedStudents = sortStudents(displayedStudents, sortField, sortAscending);
@@ -238,5 +239,307 @@ function addNotification(message, icon = 'success') {
     });
 }
 
+// // Fetch and display students on initial load
+// fetchStudents();
 
-fetchStudents();
+
+// // Initialize an empty array for students data
+// let students = [];
+
+// // Function to fetch all students from the server and update the `students` array
+// async function fetchStudents() {
+//     try {
+//         const response = await fetch('http://localhost:5000/students');
+//         students = await response.json();
+//         displayStudents();
+//     } catch (error) {
+//         console.error('Error fetching students:', error);
+//         addNotification('Failed to load students. Please try again.', 'error');
+//     }
+// }
+
+// // Function to add a performance record for a student
+// async function addPerformanceRecord(studentId, subject, score) {
+//     const student = students.find(s => s._id === studentId);
+//     if (student) {
+//         student.performance.push({ subject, score, date: new Date().toISOString() });
+        
+//         try {
+//             const response = await fetch(`http://localhost:5000/students/${studentId}`, {
+//                 method: 'PUT',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify(student)
+//             });
+            
+//             if (!response.ok) {
+//                 throw new Error('Failed to update performance');
+//             }
+
+//             fetchStudents();  // Refresh the student data
+//             addNotification('Performance record added successfully!', 'success');
+//             return true;
+//         } catch (error) {
+//             console.error('Error updating performance:', error);
+//             addNotification('Failed to update performance. Please try again.', 'error');
+//             return false;
+//         }
+//     }
+//     return false;
+// }
+
+// // Function to export student data to a CSV file
+// function exportToCSV() {
+//     const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
+//         + students.map(s => `${s.name},${s.age},${s.class},${s.performance.map(p => p.subject).join('|')},${s.performance.map(p => p.score).join('|')}`).join("\n");
+
+//     const encodedUri = encodeURI(csvContent);
+//     const link = document.createElement("a");
+//     link.setAttribute("href", encodedUri);
+//     link.setAttribute("download", "students.csv");
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//     addNotification('CSV file exported successfully', 'success');
+// }
+
+// // Function to import student data from a CSV file
+// function importStudentsFromCSV() {
+//     const fileInput = document.createElement('input');
+//     fileInput.type = 'file';
+//     fileInput.accept = '.csv';
+//     fileInput.addEventListener('change', async (event) => {
+//         const file = event.target.files[0];
+//         if (file) {
+//             Papa.parse(file, {
+//                 download: true,
+//                 header: true,
+//                 skipEmptyLines: true,
+//                 complete: async (results) => {
+//                     const newStudents = results.data.map((row) => {
+//                         const subjects = row.Subjects.split('|');
+//                         const scores = row.Scores.split('|');
+//                         const performance = subjects.map((subject, index) => ({
+//                             subject,
+//                             score: parseInt(scores[index]),
+//                             date: new Date().toISOString()
+//                         }));
+//                         return {
+//                             name: row.Name,
+//                             age: parseInt(row.Age),
+//                             class: row.Class,
+//                             performance
+//                         };
+//                     });
+
+//                     try {
+//                         for (const student of newStudents) {
+//                             const response = await fetch('http://localhost:5000/students', {
+//                                 method: 'POST',
+//                                 headers: { 'Content-Type': 'application/json' },
+//                                 body: JSON.stringify(student)
+//                             });
+
+//                             if (!response.ok) {
+//                                 throw new Error('Failed to import student');
+//                             }
+//                         }
+//                         fetchStudents();
+//                         addNotification('Students imported successfully!', 'success');
+//                     } catch (error) {
+//                         console.error('Error importing students:', error);
+//                         addNotification('Failed to import students. Please try again.', 'error');
+//                     }
+//                 },
+//             });
+//         }
+//     });
+//     fileInput.click();
+// }
+
+// // Function to calculate statistics from the students array
+// function calculateStats() {
+//     const totalStudents = students.length;
+//     const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
+//     const classDistribution = students.reduce((dist, student) => {
+//         dist[student.class] = (dist[student.class] || 0) + 1;
+//         return dist;
+//     }, {});
+
+//     return {
+//         totalStudents,
+//         averageAge: averageAge.toFixed(2),
+//         classDistribution
+//     };
+// }
+
+// // Function to display statistics on the page
+// function displayStats() {
+//     const stats = calculateStats();
+//     const contentDiv = document.getElementById('content');
+//     contentDiv.innerHTML = `
+//         <h2>Student Statistics</h2>
+//         <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+//             <div style="width: 300px; height: 300px;">
+//                 <canvas id="performanceDistributionChart"></canvas>
+//             </div>
+//             <div style="width: 300px; height: 300px;">
+//                 <canvas id="classPerformanceChart"></canvas>
+//             </div>
+//         </div>
+//         <p>Total Students: ${stats.totalStudents}</p>
+//         <p>Average Age: ${stats.averageAge}</p>
+//     `;
+
+//     // Performance distribution chart
+//     const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
+//     new Chart(performanceCtx, {
+//         type: 'bar',
+//         data: {
+//             labels: ['0-50', '51-70', '71-80', '81-90', '91-100'],
+//             datasets: [{
+//                 label: 'Performance Distribution',
+//                 data: [
+//                     students.filter(s => s.performance.some(p => p.score >= 0 && p.score <= 50)).length,
+//                     students.filter(s => s.performance.some(p => p.score >= 51 && p.score <= 70)).length,
+//                     students.filter(s => s.performance.some(p => p.score >= 71 && p.score <= 80)).length,
+//                     students.filter(s => s.performance.some(p => p.score >= 81 && p.score <= 90)).length,
+//                     students.filter(s => s.performance.some(p => p.score >= 91 && p.score <= 100)).length
+//                 ],
+//                 backgroundColor: 'rgba(75, 192, 192, 0.6)'
+//             }]
+//         },
+//         options: {
+//             responsive: true,
+//             scales: {
+//                 y: {
+//                     beginAtZero: true,
+//                     title: {
+//                         display: true,
+//                         text: 'Number of Students'
+//                     }
+//                 }
+//             }
+//         }
+//     });
+
+//     // Class performance chart
+//     const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
+//     new Chart(classPerformanceCtx, {
+//         type: 'bar',
+//         data: {
+//             labels: Object.keys(stats.classDistribution),
+//             datasets: [
+//                 {
+//                     label: 'Number of Students',
+//                     data: Object.values(stats.classDistribution),
+//                     backgroundColor: 'rgba(255, 206, 86, 0.6)'
+//                 }
+//             ]
+//         },
+//         options: {
+//             responsive: true,
+//             scales: {
+//                 y: {
+//                     beginAtZero: true,
+//                     title: {
+//                         display: true,
+//                         text: 'Number of Students'
+//                     }
+//                 }
+//             },
+//             plugins: {
+//                 legend: {
+//                     position: 'right'
+//                 }
+//             }
+//         }
+//     });
+// }
+
+// // Function to display group statistics
+// function displayGroupStats() {
+//     const stats = calculateStats();
+//     const contentDiv = document.getElementById('content');
+//     contentDiv.innerHTML = `
+//         <h2>Group Statistics</h2>
+//         <p>Total Students: ${stats.totalStudents}</p>
+//         <p>Number of Classes: ${Object.keys(stats.classDistribution).length}</p>
+//         <h3>Students per Class:</h3>
+//         <ul>
+//             ${Object.entries(stats.classDistribution).map(([className, count]) => 
+//                 `<li>${className}: ${count} student(s)</li>`
+//             ).join('')}
+//         </ul>
+//     `;
+// }
+
+// // Function for advanced filtering of students
+// function advancedFilter() {
+//     const contentDiv = document.getElementById('content');
+//     contentDiv.innerHTML = `
+//         <h2>Advanced Filter</h2>
+//         <form id="advancedFilterForm">
+//             <label>
+//                 Age Range:
+//                 <input type="number" id="minAge" placeholder="Min Age">
+//                 <input type="number" id="maxAge" placeholder="Max Age">
+//             </label>
+//             <label>
+//                 Class:
+//                 <select id="classFilter">
+//                     <option value="">All Classes</option>
+//                     ${[...new Set(students.map(s => s.class))].map(c => `<option value="${c}">${c}</option>`).join('')}
+//                 </select>
+//             </label>
+//             <button type="submit">Apply Filter</button>
+//         </form>
+//         <div id="filterResults"></div>
+//     `;
+
+//     document.getElementById('advancedFilterForm').addEventListener('submit', (e) => {
+//         e.preventDefault();
+//         const minAge = document.getElementById('minAge').value;
+//         const maxAge = document.getElementById('maxAge').value;
+//         const classFilter = document.getElementById('classFilter').value;
+
+//         const filteredStudents = students.filter(student => 
+//             (!minAge || student.age >= minAge) &&
+//             (!maxAge || student.age <= maxAge) &&
+//             (!classFilter || student.class === classFilter)
+//         );
+
+//         document.getElementById('filterResults').innerHTML = `
+//             <h3>Filtered Results (${filteredStudents.length} students)</h3>
+//             <table>
+//                 <thead>
+//                     <tr>
+//                         <th>Name</th>
+//                         <th>Age</th>
+//                         <th>Class</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     ${filteredStudents.map(student => `
+//                         <tr>
+//                             <td>${student.name}</td>
+//                             <td>${student.age}</td>
+//                             <td>${student.class}</td>
+//                         </tr>
+//                     `).join('')}
+//                 </tbody>
+//             </table>
+//         `;
+//     });
+// }
+
+// // Initialize the student list on page load
+// fetchStudents();
+
+// // Helper function to display notifications
+// function addNotification(message, type = 'success') {
+//     const notification = document.createElement('div');
+//     notification.className = `notification ${type}`;
+//     notification.innerText = message;
+//     document.body.appendChild(notification);
+//     setTimeout(() => notification.remove(), 3000);
+// }
