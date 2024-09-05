@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
     displayStudents();
 });
 
-// Handle Attendance
 attendanceBtn.addEventListener('click', () => {
     content.innerHTML = `
         <h2>Sign Attendance</h2>
@@ -118,7 +117,6 @@ attendanceBtn.addEventListener('click', () => {
     });
 });
 
-// Handle Materials
 materialsBtn.addEventListener('click', async () => {
     const response = await fetch('http://localhost:5000/materials');
     const materials = await response.json();
@@ -133,7 +131,6 @@ materialsBtn.addEventListener('click', async () => {
     `;
 });
 
-// Handle Performance
 performanceBtn.addEventListener('click', async () => {
     const response = await fetch('http://localhost:5000/students/performance');
     const performance = await response.json();
@@ -144,7 +141,7 @@ performanceBtn.addEventListener('click', async () => {
 });
 
 
-// Fetch notifications every 30 seconds
+
 setInterval(async () => {
     const response = await fetch('http://localhost:5000/notifications');
     const notifications = await response.json();
@@ -174,3 +171,13 @@ document.getElementById('uploadMaterialForm').addEventListener('submit', async (
         addNotification(result.message, 'error');
     }
 });
+
+
+setInterval(async () => {
+    const response = await fetch('http://localhost:5000/attandance');
+    const notifications = await response.json();
+    
+    notifications.forEach(notification => {
+        addNotification(notificationsignAttendance, notification.icon);
+    });
+}, 30000);

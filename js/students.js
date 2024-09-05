@@ -1,4 +1,4 @@
-// Fetch students from the server and display them
+
 // async function fetchStudents() {
 //     try {
 //         const response = await fetch('http://localhost:5000/students');
@@ -10,7 +10,6 @@
 //     }
 // }
 
-// // Add a new student
 // async function addStudent(name, age, className, performance = []) {
 //     try {
 //         const newStudent = { name, age, class: className, performance };
@@ -28,7 +27,6 @@
 //     }
 // }
 
-// // Update an existing student
 // async function updateStudent(id, updatedInfo) {
 //     try {
 //         const response = await fetch(`http://localhost:5000/students/${id}`, {
@@ -45,7 +43,6 @@
 //     }
 // }
 
-// // Delete a student
 // async function deleteStudent(id) {
 //     try {
 //         await fetch(`http://localhost:5000/students/${id}`, {
@@ -59,7 +56,6 @@
 //     }
 // }
 
-// // Delete all students
 // async function deleteAllStudents() {
 //     try {
 //         await fetch('http://localhost:5000/students', {
@@ -73,90 +69,89 @@
 //     }
 // }
 
-// // Display students in the table
-function displayStudents(students, searchQuery = '', sortField = 'name', sortAscending = true, page = 1, pageSize = 10) {
-    let displayedStudents = searchQuery ? searchStudents(students, searchQuery) : students;
-    displayedStudents = sortStudents(displayedStudents, sortField, sortAscending);
+// function displayStudents(students, searchQuery = '', sortField = 'name', sortAscending = true, page = 1, pageSize = 10) {
+//     let displayedStudents = searchQuery ? searchStudents(students, searchQuery) : students;
+//     displayedStudents = sortStudents(displayedStudents, sortField, sortAscending);
 
-    const totalPages = Math.ceil(displayedStudents.length / pageSize);
-    const startIndex = (page - 1) * pageSize;
-    const paginatedStudents = displayedStudents.slice(startIndex, startIndex + pageSize);
+//     const totalPages = Math.ceil(displayedStudents.length / pageSize);
+//     const startIndex = (page - 1) * pageSize;
+//     const paginatedStudents = displayedStudents.slice(startIndex, startIndex + pageSize);
 
-    const contentDiv = document.getElementById('content');
-    contentDiv.innerHTML = `
-        <h2>Student List</h2>
-        <input type="text" id="searchInput" placeholder="Search students..." value="${searchQuery}">
-        <select id="sortSelect">
-            <option value="name" ${sortField === 'name' ? 'selected' : ''}>Sort by Name</option>
-            <option value="age" ${sortField === 'age' ? 'selected' : ''}>Sort by Age</option>
-            <option value="class" ${sortField === 'class' ? 'selected' : ''}>Sort by Class</option>
-        </select>
-        <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
-        <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
-        <button id="deleteAllBtn"><i class="fa-solid fa-trash"> Delete All</i></button>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Class</th>
-                    <th>Subjects</th>
-                    <th>Scores</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${paginatedStudents.map(student => `
-                    <tr>
-                        <td>${student.name}</td>
-                        <td>${student.age}</td>
-                        <td>${student.class}</td>
-                        <td>${student.performance.map(p => p.subject).join(', ')}</td>
-                        <td>${student.performance.map(p => p.score).join(', ')}</td>
-                        <td>
-                            <button onclick="editStudent('${student._id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-                            <button onclick="deleteStudent('${student._id}')"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-        <div class="pagination">
-            ${Array.from({ length: totalPages }, (_, i) => i + 1).map(num => 
-                `<button onclick="displayStudents('${searchQuery}', '${sortField}', ${sortAscending}, ${num})" ${num === page ? 'disabled' : ''}>${num}</button>`
-            ).join('')}
-        </div>
-    `;
+//     const contentDiv = document.getElementById('content');
+//     contentDiv.innerHTML = `
+//         <h2>Student List</h2>
+//         <input type="text" id="searchInput" placeholder="Search students..." value="${searchQuery}">
+//         <select id="sortSelect">
+//             <option value="name" ${sortField === 'name' ? 'selected' : ''}>Sort by Name</option>
+//             <option value="age" ${sortField === 'age' ? 'selected' : ''}>Sort by Age</option>
+//             <option value="class" ${sortField === 'class' ? 'selected' : ''}>Sort by Class</option>
+//         </select>
+//         <button id="exportBtn"><i class="fa-solid fa-download"></i> Export to CSV</button>
+//         <button id="importBtn"><i class="fa-solid fa-upload"></i> Import Students from CSV</button>
+//         <button id="deleteAllBtn"><i class="fa-solid fa-trash"> Delete All</i></button>
+//         <table>
+//             <thead>
+//                 <tr>
+//                     <th>Name</th>
+//                     <th>Age</th>
+//                     <th>Class</th>
+//                     <th>Subjects</th>
+//                     <th>Scores</th>
+//                     <th>Actions</th>
+//                 </tr>
+//             </thead>
+//             <tbody>
+//                 ${paginatedStudents.map(student => `
+//                     <tr>
+//                         <td>${student.name}</td>
+//                         <td>${student.age}</td>
+//                         <td>${student.class}</td>
+//                         <td>${student.performance.map(p => p.subject).join(', ')}</td>
+//                         <td>${student.performance.map(p => p.score).join(', ')}</td>
+//                         <td>
+//                             <button onclick="editStudent('${student._id}')"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+//                             <button onclick="deleteStudent('${student._id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+//                         </td>
+//                     </tr>
+//                 `).join('')}
+//             </tbody>
+//         </table>
+//         <div class="pagination">
+//             ${Array.from({ length: totalPages }, (_, i) => i + 1).map(num => 
+//                 `<button onclick="displayStudents('${searchQuery}', '${sortField}', ${sortAscending}, ${num})" ${num === page ? 'disabled' : ''}>${num}</button>`
+//             ).join('')}
+//         </div>
+//     `;
 
-    document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV);
-    document.getElementById('deleteAllBtn').addEventListener('click', deleteAllStudents);
+//     document.getElementById('importBtn').addEventListener('click', importStudentsFromCSV);
+//     document.getElementById('deleteAllBtn').addEventListener('click', deleteAllStudents);
 
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-        displayStudents(students, e.target.value, sortField, sortAscending);
-    });
+//     document.getElementById('searchInput').addEventListener('input', (e) => {
+//         displayStudents(students, e.target.value, sortField, sortAscending);
+//     });
 
-    document.getElementById('sortSelect').addEventListener('change', (e) => {
-        sortField = e.target.value;
-        displayStudents(students, searchQuery, sortField, sortAscending);
-    });
+//     document.getElementById('sortSelect').addEventListener('change', (e) => {
+//         sortField = e.target.value;
+//         displayStudents(students, searchQuery, sortField, sortAscending);
+//     });
 
-    document.getElementById('exportBtn').addEventListener('click', () => exportToCSV(students));
-}
+//     document.getElementById('exportBtn').addEventListener('click', () => exportToCSV(students));
+// }
 
-function searchStudents(students, query) {
-    return students.filter(student => 
-        student.name.toLowerCase().includes(query.toLowerCase()) ||
-        student.class.toLowerCase().includes(query.toLowerCase())
-    );
-}
+// function searchStudents(students, query) {
+//     return students.filter(student => 
+//         student.name.toLowerCase().includes(query.toLowerCase()) ||
+//         student.class.toLowerCase().includes(query.toLowerCase())
+//     );
+// }
 
-function sortStudents(studentsToSort, field, ascending = true) {
-    return [...studentsToSort].sort((a, b) => {
-        if (a[field] < b[field]) return ascending ? -1 : 1;
-        if (a[field] > b[field]) return ascending ? 1 : -1;
-        return 0;
-    });
-}
+// function sortStudents(studentsToSort, field, ascending = true) {
+//     return [...studentsToSort].sort((a, b) => {
+//         if (a[field] < b[field]) return ascending ? -1 : 1;
+//         if (a[field] > b[field]) return ascending ? 1 : -1;
+//         return 0;
+//     });
+// }
 
 // function exportToCSV(students) {
 //     const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
@@ -239,14 +234,13 @@ function sortStudents(studentsToSort, field, ascending = true) {
 //     });
 // }
 
-// // Fetch and display students on initial load
 fetchStudents();
 
 
-// Initialize an empty array for students data
+
 let students = [];
 
-// Function to fetch all students from the server and update the `students` array
+
 async function fetchStudents() {
     try {
         const response = await fetch('http://localhost:5000/students');
@@ -258,7 +252,7 @@ async function fetchStudents() {
     }
 }
 
-// Function to add a performance record for a student
+
 async function addPerformanceRecord(studentId, subject, score) {
     const student = students.find(s => s._id === studentId);
     if (student) {
@@ -275,7 +269,7 @@ async function addPerformanceRecord(studentId, subject, score) {
                 throw new Error('Failed to update performance');
             }
 
-            fetchStudents();  // Refresh the student data
+            fetchStudents();  
             addNotification('Performance record added successfully!', 'success');
             return true;
         } catch (error) {
@@ -287,7 +281,6 @@ async function addPerformanceRecord(studentId, subject, score) {
     return false;
 }
 
-// Function to export student data to a CSV file
 function exportToCSV() {
     const csvContent = "data:text/csv;charset=utf-8,Name,Age,Class,Subjects,Scores\n"
         + students.map(s => `${s.name},${s.age},${s.class},${s.performance.map(p => p.subject).join('|')},${s.performance.map(p => p.score).join('|')}`).join("\n");
@@ -302,7 +295,6 @@ function exportToCSV() {
     addNotification('CSV file exported successfully', 'success');
 }
 
-// Function to import student data from a CSV file
 function importStudentsFromCSV() {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
@@ -356,7 +348,6 @@ function importStudentsFromCSV() {
     fileInput.click();
 }
 
-// Function to calculate statistics from the students array
 function calculateStats() {
     const totalStudents = students.length;
     const averageAge = students.reduce((sum, student) => sum + student.age, 0) / totalStudents || 0;
@@ -372,7 +363,6 @@ function calculateStats() {
     };
 }
 
-// Function to display statistics on the page
 function displayStats() {
     const stats = calculateStats();
     const contentDiv = document.getElementById('content');
@@ -390,7 +380,7 @@ function displayStats() {
         <p>Average Age: ${stats.averageAge}</p>
     `;
 
-    // Performance distribution chart
+
     const performanceCtx = document.getElementById('performanceDistributionChart').getContext('2d');
     new Chart(performanceCtx, {
         type: 'bar',
@@ -422,7 +412,6 @@ function displayStats() {
         }
     });
 
-    // Class performance chart
     const classPerformanceCtx = document.getElementById('classPerformanceChart').getContext('2d');
     new Chart(classPerformanceCtx, {
         type: 'bar',
@@ -456,7 +445,7 @@ function displayStats() {
     });
 }
 
-// Function to display group statistics
+
 function displayGroupStats() {
     const stats = calculateStats();
     const contentDiv = document.getElementById('content');
@@ -532,10 +521,10 @@ function advancedFilter() {
     });
 }
 
-// Initialize the student list on page load
+
 fetchStudents();
 
-// Helper function to display notifications
+
 function addNotification(message, type = 'success') {
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
