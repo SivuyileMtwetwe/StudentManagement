@@ -97,3 +97,80 @@ document.addEventListener('DOMContentLoaded', () => {
     displayStudents();
 });
 
+// Handle Attendance
+attendanceBtn.addEventListener('click', () => {
+    content.innerHTML = `
+        <h2>Sign Attendance</h2>
+        <form id="attendanceForm">
+            <input type="text" id="studentName" placeholder="Student Name" required>
+            <button type="submit">Submit</button>
+        </form>
+    `;
+    document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const studentName = document.getElementById('studentName').value;
+        await fetch('http://localhost:5000/attendance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentName })
+        });
+        addNotification('Attendance signed successfully!');
+    });
+});
+
+// Handle Materials
+materialsBtn.addEventListener('click', async () => {
+    const response = await fetch('http://localhost:5000/materials');
+    const materials = await response.json();
+    content.innerHTML = `
+        <h2>Materials</h2>
+        <ul>${materials.map(material => `<li><a href="${material.link}">${material.name}</a></li>`).join('')}</ul>
+
+        <form id="uploadMaterialForm" enctype="multipart/form-data">
+        <input type="file" id="materialFile" name="file" required>
+        <button type="submit">Upload Material</button>
+    </form>
+    `;
+});
+
+// Handle Performance
+performanceBtn.addEventListener('click', async () => {
+    const response = await fetch('http://localhost:5000/students/performance');
+    const performance = await response.json();
+    content.innerHTML = `
+        <h2>Performance</h2>
+        <ul>${performance.map(record => `<li>${record.subject}: ${record.score}</li>`).join('')}</ul>
+    `;
+});
+
+
+// Fetch notifications every 30 seconds
+setInterval(async () => {
+    const response = await fetch('http://localhost:5000/notifications');
+    const notifications = await response.json();
+    
+    notifications.forEach(notification => {
+        addNotification(notification.message, notification.icon);
+    });
+}, 30000);
+
+
+document.getElementById('uploadMaterialForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('file', document.getElementById('materialFile').files[0]);
+    formData.append('postedBy', 'TeacherName');
+
+    const response = await fetch('http://localhost:5000/materials/upload', {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+    if (result.message === 'Material uploaded successfully') {
+        addNotification(result.message, 'success');
+    } else {
+        addNotification(result.message, 'error');
+    }
+});
