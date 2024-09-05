@@ -108,7 +108,7 @@ attendanceBtn.addEventListener('click', () => {
     document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const studentName = document.getElementById('studentName').value;
-        await fetch('http://localhost:5000/attendance', {
+        await fetch('https://student-management-api-hazel.vercel.app/attendance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ studentName })
@@ -118,7 +118,7 @@ attendanceBtn.addEventListener('click', () => {
 });
 
 materialsBtn.addEventListener('click', async () => {
-    const response = await fetch('http://localhost:5000/materials');
+    const response = await fetch('https://student-management-api-hazel.vercel.app/materials');
     const materials = await response.json();
     content.innerHTML = `
         <h2>Materials</h2>
@@ -132,7 +132,7 @@ materialsBtn.addEventListener('click', async () => {
 });
 
 performanceBtn.addEventListener('click', async () => {
-    const response = await fetch('http://localhost:5000/students/performance');
+    const response = await fetch('https://student-management-api-hazel.vercel.app/students/performance');
     const performance = await response.json();
     content.innerHTML = `
         <h2>Performance</h2>
@@ -143,7 +143,7 @@ performanceBtn.addEventListener('click', async () => {
 
 
 setInterval(async () => {
-    const response = await fetch('http://localhost:5000/notifications');
+    const response = await fetch('https://student-management-api-hazel.vercel.app/notifications');
     const notifications = await response.json();
     
     notifications.forEach(notification => {
@@ -159,7 +159,7 @@ document.getElementById('uploadMaterialForm').addEventListener('submit', async (
     formData.append('file', document.getElementById('materialFile').files[0]);
     formData.append('postedBy', 'TeacherName');
 
-    const response = await fetch('http://localhost:5000/materials/upload', {
+    const response = await fetch('https://student-management-api-hazel.vercel.app/materials/upload', {
         method: 'POST',
         body: formData
     });
@@ -174,7 +174,7 @@ document.getElementById('uploadMaterialForm').addEventListener('submit', async (
 
 
 setInterval(async () => {
-    const response = await fetch('http://localhost:5000/attandance');
+    const response = await fetch('https://student-management-api-hazel.vercel.app/attandance');
     const notifications = await response.json();
     
     notifications.forEach(notification => {

@@ -1,7 +1,7 @@
 
 // async function fetchStudents() {
 //     try {
-//         const response = await fetch('http://localhost:5000/students');
+//         const response = await fetch('https://student-management-api-hazel.vercel.app/students');
 //         const students = await response.json();
 //         displayStudents(students);
 //     } catch (error) {
@@ -13,7 +13,7 @@
 // async function addStudent(name, age, className, performance = []) {
 //     try {
 //         const newStudent = { name, age, class: className, performance };
-//         const response = await fetch('http://localhost:5000/students', {
+//         const response = await fetch('https://student-management-api-hazel.vercel.app/students', {
 //             method: 'POST',
 //             headers: { 'Content-Type': 'application/json' },
 //             body: JSON.stringify(newStudent)
@@ -29,7 +29,7 @@
 
 // async function updateStudent(id, updatedInfo) {
 //     try {
-//         const response = await fetch(`http://localhost:5000/students/${id}`, {
+//         const response = await fetch(`https://student-management-api-hazel.vercel.app/students/${id}`, {
 //             method: 'PUT',
 //             headers: { 'Content-Type': 'application/json' },
 //             body: JSON.stringify(updatedInfo)
@@ -45,7 +45,7 @@
 
 // async function deleteStudent(id) {
 //     try {
-//         await fetch(`http://localhost:5000/students/${id}`, {
+//         await fetch(`https://student-management-api-hazel.vercel.app/students/${id}`, {
 //             method: 'DELETE'
 //         });
 //         fetchStudents(); // Refresh the student list
@@ -58,7 +58,7 @@
 
 // async function deleteAllStudents() {
 //     try {
-//         await fetch('http://localhost:5000/students', {
+//         await fetch('https://student-management-api-hazel.vercel.app/students', {
 //             method: 'DELETE'
 //         });
 //         fetchStudents(); // Refresh the student list
@@ -203,7 +203,7 @@
 // }
 
 // function editStudent(id) {
-//     fetch(`http://localhost:5000/students/${id}`)
+//     fetch(`https://student-management-api-hazel.vercel.app/students/${id}`)
 //         .then(response => response.json())
 //         .then(student => {
 //             document.getElementById('studentName').value = student.name;
@@ -243,7 +243,7 @@ let students = [];
 
 async function fetchStudents() {
     try {
-        const response = await fetch('http://localhost:5000/students');
+        const response = await fetch('https://student-management-api-hazel.vercel.app/students');
         students = await response.json();
         displayStudents();
     } catch (error) {
@@ -259,7 +259,7 @@ async function addPerformanceRecord(studentId, subject, score) {
         student.performance.push({ subject, score, date: new Date().toISOString() });
         
         try {
-            const response = await fetch(`http://localhost:5000/students/${studentId}`, {
+            const response = await fetch(`https://student-management-api-hazel.vercel.app/students/${studentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(student)
@@ -325,7 +325,7 @@ function importStudentsFromCSV() {
 
                     try {
                         for (const student of newStudents) {
-                            const response = await fetch('http://localhost:5000/students', {
+                            const response = await fetch('https://student-management-api-hazel.vercel.app/students', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(student)
