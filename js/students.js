@@ -275,7 +275,66 @@ attendanceBtn.addEventListener('click', async () => {
     });
 });
 
-// Notifications
+// View Performance functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const performanceBtn = document.getElementById('performanceBtn');
+    
+    if (performanceBtn) {
+        performanceBtn.addEventListener('click', async (e) => {
+            e.preventDefault();  // Prevent default behavior
+            const performanceData = await fetchPerformance(); // Fetch performance data
+            displayPerformance(performanceData); // Display it in a report card format
+        });
+    }
+});
+
+// Fetch performance data from the server
+async function fetchPerformance() {
+    try {
+        const response = await fetch('http://localhost:5000/students/performance'); // API call to the backend
+        const performanceData = await response.json();
+        addNotification('Performance data loaded successfully', 'success');
+        return performanceData;
+    } catch (error) {
+        console.error('Error fetching performance data:', error);
+        addNotification('Failed to load performance data.', 'error');
+        return [];
+    }
+}
+
+// Display the performance data as report cards
+function displayPerformance(performanceData) {
+    const contentDiv = document.getElementById('content');
+    contentDiv.innerHTML = '<h2>Student Performance</h2>';
+
+    // Loop through each student's performance data and create a report card
+    performanceData.forEach(student => {
+        const studentPerformanceHTML = `
+            <div class="student-performance-card">
+                <h3>${student.name} - Class: ${student.class}</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${student.performance.map(p => `
+                            <tr>
+                                <td>${p.subject}</td>
+                                <td>${p.score}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        contentDiv.innerHTML += studentPerformanceHTML;
+    });
+}
+
+// Notification function to show success/error messages
 function addNotification(message, icon = 'success') {
     const Toast = Swal.mixin({
         toast: true,
@@ -296,3 +355,5 @@ function addNotification(message, icon = 'success') {
 
 // Fetch students on page load
 fetchStudents();
+
+

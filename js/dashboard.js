@@ -135,6 +135,11 @@ materialsBtn.addEventListener('click', async () => {
         <form id="uploadMaterialForm" enctype="multipart/form-data">
         <input type="file" id="materialFile" name="file" required>
         <button type="submit">Upload Material</button>
+
+    
+
+<div id="Bookcontent"></div>
+
     </form>
     `;
 });
@@ -218,4 +223,45 @@ attendanceBtn.addEventListener('click', () => {
     fetchStudents().then(students => {
         displayAttendanceForm(students); // This function should render the attendance form
     });
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const booksUrl = 'https://freetestapi.com/api/v1/books';
+    const contentDiv = document.getElementById('Bookcontent');
+
+    function displayBooks(books) {
+        contentDiv.innerHTML = '<h2>Books List</h2>';
+
+        if (books.length === 0) {
+            contentDiv.innerHTML += '<p>No books available at the moment.</p>';
+            return;
+        }
+
+        const booksHTML = books.map(book => `
+            <div class="book-item">
+                <img src="${book.cover_image}" alt="${book.title}" class="book-cover">
+                <div>
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author}</p>
+                    <p><strong>Publication Year:</strong> ${book.publication_year}</p>
+                    <p><strong>Description:</strong> ${book.description}</p>
+                    <p><strong>Genre:</strong> ${book.genre.join(', ')}</p>
+                </div>
+            </div>
+        `).join('');
+
+        contentDiv.innerHTML += booksHTML;
+    }
+
+    fetch(booksUrl)
+        .then(response => response.json())
+        .then(data => {
+            const books = data.books; // Adjust if the JSON structure is different
+            displayBooks(books);
+        })
+        .catch(error => {
+            contentDiv.innerHTML = '<p>Failed to load books. Please try again later.</p>';
+            console.error('Error fetching books:', error);
+        });
 });
