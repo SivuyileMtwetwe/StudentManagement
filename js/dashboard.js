@@ -213,3 +213,9 @@ document.getElementById('submitAttendanceBtn').addEventListener('click', async (
         addNotification('Failed to submit attendance', 'error');
     }
 });
+
+attendanceBtn.addEventListener('click', () => {
+    fetchStudents().then(students => {
+        displayAttendanceForm(students); // This function should render the attendance form
+    });
+});
