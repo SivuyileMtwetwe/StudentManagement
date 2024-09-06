@@ -99,11 +99,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 attendanceBtn.addEventListener('click', () => {
     content.innerHTML = `
-        <h2>Sign Attendance</h2>
-        <form id="attendanceForm">
-            <input type="text" id="studentName" placeholder="Student Name" required>
-            <button type="submit">Submit</button>
-        </form>
+     <h2>Mark Attendance</h2>
+<table id="attendanceTable">
+    <thead>
+        <tr>
+            <th>Student Name</th>
+            <th>Present</th>
+            <th>Absent</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<button id="submitAttendanceBtn">Submit Attendance</button>
+
     `;
     document.getElementById('attendanceForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -181,3 +189,27 @@ setInterval(async () => {
         addNotification(notificationsignAttendance, notification.icon);
     });
 }, 30000);
+
+document.getElementById('submitAttendanceBtn').addEventListener('click', async () => {
+    const attendanceData = [];
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const studentId = row.querySelector('input[name^="attendance_"]').name.split('_')[1];
+        const present = row.querySelector(`input[name="attendance_${studentId}"]:checked`).value === 'present';
+
+        attendanceData.push({ studentId, present });
+    });
+
+    const response = await fetch('https://student-management-api-hazel.vercel.app/attendance/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attendanceData })
+    });
+
+    const result = await response.json();
+    if (result.message === 'Attendance saved successfully') {
+        addNotification('Attendance submitted successfully', 'success');
+    } else {
+        addNotification('Failed to submit attendance', 'error');
+    }
+});
