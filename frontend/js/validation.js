@@ -48,3 +48,18 @@ function displayErrors(errors) {
     input.parentNode.insertBefore(errorMessage, input.nextSibling);
   }
 }
+
+export const validatePassword = (password) => {
+  const minLength = 8;
+  const hasNumber = /\d/.test(password);
+  const hasUpper = /[A-Z]/.test(password);
+  const hasLower = /[a-z]/.test(password);
+  return {
+    isValid: password.length >= minLength && hasNumber && hasUpper && hasLower,
+    errors: []
+      .concat(!hasUpper ? 'Missing uppercase letter' : [])
+      .concat(!hasLower ? 'Missing lowercase letter' : [])
+      .concat(!hasNumber ? 'Missing number' : [])
+      .concat(password.length < minLength ? 'Too short' : [])
+  };
+};

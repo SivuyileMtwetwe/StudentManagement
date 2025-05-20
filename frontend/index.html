@@ -12,7 +12,20 @@
       <h1>Student Management System</h1>
       <form id="loginForm">
         <input type="text" id="username" placeholder="Username" required />
-        <input type="password" id="password" placeholder="Password" required />
+        <!-- Add password show/hide toggle and password requirements -->
+        <div class="password-container">
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="Password" 
+            required 
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$"
+            title="Password must be at least 8 characters and include uppercase, lowercase, and numbers"
+          />
+          <button type="button" class="password-toggle">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
         <button type="submit">
           <i class="fa-solid fa-right-to-bracket"></i> Login
         </button>
